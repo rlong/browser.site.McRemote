@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="mc-remote">
+<head>
+
+    <title>DVD Remote</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS -->
+    <link href="../../node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../node_modules/nouislider/distribute/nouislider.min.css" rel="stylesheet">
+    <link href="../../css/mc-remote.css" rel="stylesheet">
+
+    <!-- JS libs -->
+    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../node_modules/angular/angular.js"></script>
+    <script src="../../node_modules/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="../../node_modules/nouislider/distribute/nouislider.min.js"></script>
+
+    <!-- TS libs -->
+    <script src="../../github/lib.json_broker/json_broker.js"></script>
+    <script src="../../github/lib.json_broker/angular1.js"></script>
+    <script src="../../github/angular1_nouislider/angular1_nouislider.js"></script>
+    <script src="../../component/popup.js"></script>
+    <script src="../../ts/application.js"></script>
+    <script src="../../ts/page.js"></script>
+    <script src="../../ts/session.js"></script>
+
+    <script src="com.apple.DVDPlayer.js"></script>
+    <script src="index.js"></script>
+
+</head>
+<body>
+
+
+<!--
+#include <navbar-fixed-top.html>
+-->
+
+<div class="container" ng-controller="index">
+
+
+    <div nouislider ng-model="model.applicationState.audio_volume" no-ui-slider-config="viewController.audioVolumeSliderConfig"
+         ng-change="viewController.audioVolumeOnChange(model.applicationState.audio_volume)">
+    </div>
+
+    <h2>ApplicationState</h2>
+    <table>
+        <tr>
+            <td>model.applicationState.app_initializing</td>
+            <td>{{model.applicationState.app_initializing}}</td>
+        </tr>
+        <tr>
+            <td>model.applicationState.audio_volume</td>
+            <td>{{model.applicationState.audio_volume}}</td>
+        </tr>
+        <tr>
+            <td>model.applicationState.closed_captioning</td>
+            <td>{{model.applicationState.closed_captioning}}</td>
+        </tr>
+        <tr>
+            <td>model.applicationState.displaying_subtitle</td>
+            <td>{{model.applicationState.displaying_subtitle}}</td>
+        </tr>
+        <tr>
+            <td>model.applicationState.dvd_scan_rate</td>
+            <td>{{model.applicationState.dvd_scan_rate}}</td>
+        </tr>
+        <tr>
+            <td>model.applicationState.has_media</td>
+            <td>{{model.applicationState.has_media}}</td>
+        </tr>
+        <tr>
+            <td>model.applicationState.viewer_full_screen</td>
+            <td>{{model.applicationState.viewer_full_screen}}</td>
+        </tr>
+    </table>
+
+    <div ng-if="model.applicationState.has_media">
+
+
+        <div class="row">
+
+            <div nouislider ng-model="model.mediaState.elapsed_time" no-ui-slider-config="viewController.elapsedTimeSliderConfig"
+                 ng-change="">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6">
+
+                <button class="btn btn-default" ng-click="viewController.ejectOnClick()" style="width: 100%;">
+                    Eject
+                </button>
+            </div>
+
+            <div class="col-xs-12">
+                <button class="btn btn-default" ng-click="viewController.playPauseOnClick()" style="width: 100%;">
+                    Play / Pause
+                </button>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <h2>MediaState</h2>
+        <table>
+            <tr>
+                <td>model.mediaState.available_chapters</td>
+                <td>{{model.mediaState.available_chapters}}</td>
+            </tr>
+            <tr>
+                <td>model.mediaState.current_chapter</td>
+                <td>{{model.mediaState.current_chapter}}</td>
+            </tr>
+            <tr>
+                <td>model.mediaState.dvd_menu_active</td>
+                <td>{{model.mediaState.dvd_menu_active}}</td>
+            </tr>
+            <tr>
+                <td>model.mediaState.dvd_state</td>
+                <td>{{model.mediaState.dvd_state}}</td>
+            </tr>
+            <tr>
+                <td>model.mediaState.elapsed_time</td>
+                <td>{{model.mediaState.elapsed_time}}</td>
+            </tr>
+            <tr>
+                <td>model.mediaState.has_media</td>
+                <td>{{model.mediaState.has_media}}</td>
+            </tr>
+            <tr>
+                <td>model.mediaState.title_length</td>
+                <td>{{model.mediaState.title_length}}</td>
+            </tr>
+        </table>
+
+        <hr>
+
+
+    </div>
+
+
+</div>
+
+
+
+</body>
+</html>

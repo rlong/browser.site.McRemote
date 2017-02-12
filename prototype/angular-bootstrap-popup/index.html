@@ -1,0 +1,75 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Template</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- CSS -->
+    <link href="../../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/mc-remote.css" rel="stylesheet">
+
+    <!-- JS libs -->
+    <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../bower_components/angular/angular.js"></script>
+    <script src="../../bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="../../bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+
+    <!-- App libs -->
+    <script src="../../component/component.popup.js"></script>
+    <script src="../../ts/application_context.js"></script>
+    <script src="../../ts/jsonbroker/jsonbroker.js"></script>
+    <script src="../../ts/application_context.js"></script>
+
+    <script src="index.js"></script>
+
+</head>
+<body>
+
+
+
+<!--  {% include body-nav.navbar.html %} -->
+
+
+<!-- {% raw %} -->
+<div class="container">
+
+    <div class="starter-template">
+        <h1>starter-template</h1>
+        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+    </div>
+
+</div>
+
+
+<div ng-app="ui.bootstrap.demo" ng-controller="ModalDemoCtrl">
+
+    <button type="button" class="btn btn-default" ng-click="open()">Open me!</button>
+    <button type="button" class="btn btn-default" ng-click="open('lg')">Large modal</button>
+    <button type="button" class="btn btn-default" ng-click="open('sm')">Small modal</button>
+    <button type="button" class="btn btn-default" ng-click="toggleAnimation()">Toggle Animation ({{ animationsEnabled }})</button>
+    <div ng-show="selected">Selection from a modal: {{ selected }}</div>
+</div>
+
+
+
+
+
+<!-- {% endraw %} -->
+
+
+
+
+
+
+
+
+</body>
+</html>

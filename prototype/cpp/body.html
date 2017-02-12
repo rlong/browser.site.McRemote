@@ -1,0 +1,12 @@
+vvv body.html -->
+
+<h1>body</h1>
+
+cpp -C -P -Wno-invalid-pp-token _index.html
+cpp -P -Wno-invalid-pp-token -I `pwd`/../../_includes _index.html
+cpp -P -Wno-invalid-pp-token -I . _index.html
+cpp -P -Wno-invalid-pp-token -F . _index.html
+cpp -P -Wno-invalid-pp-token -working-directory `pwd`/../../ _index.html
+clang -E -P -Wno-invalid-pp-token _index.html
+
+<!-- ^^^ body.html
