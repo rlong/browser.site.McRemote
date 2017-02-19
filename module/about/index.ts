@@ -3,17 +3,13 @@
  */
 
 /// <reference path="../../typings/index.d.ts" />
+/// <reference path="../../ts/page.ts" />
 
+var mcRemote= page.buildAngularModule();
 
-module about {
+mcRemote.controller('index', ["$scope", function ($scope) {
 
-    var mcRemote= angular.module('mc-remote', []);
+    $scope.variable = "hey hey (from angular)";
 
-    mcRemote.controller('index', ["$scope", function ($scope) {
-
-        $scope.variable = "hey hey (from angular)";
-
-    }]);
-
-}
+}]);
 

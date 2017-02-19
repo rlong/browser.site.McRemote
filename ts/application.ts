@@ -7,27 +7,20 @@
 /// <reference path="../component/popup.ts" />
 
 
+
 namespace application {
 
-    export namespace context {
 
-        export function setup( module: angular.IModule ) {
 
-        }
+    export class Context {
 
     }
 
-    export namespace utility {
+    var context: Context = null;
 
-        export function copyInto( destinationObject: any, sourceObject?: any ) {
-            if( !sourceObject ) {
-                return;
-            }
-            for (var prop in sourceObject) {
-                destinationObject[prop] = sourceObject[prop];
-            }
-        }
+    export function setup( module: angular.IModule ) {
 
+        context = new Context();
     }
 
 }

@@ -5,23 +5,16 @@
 /// <reference path="../component/popup.ts" />
 var application;
 (function (application) {
-    var context;
-    (function (context) {
-        function setup(module) {
+    var Context = (function () {
+        function Context() {
         }
-        context.setup = setup;
-    })(context = application.context || (application.context = {}));
-    var utility;
-    (function (utility) {
-        function copyInto(destinationObject, sourceObject) {
-            if (!sourceObject) {
-                return;
-            }
-            for (var prop in sourceObject) {
-                destinationObject[prop] = sourceObject[prop];
-            }
-        }
-        utility.copyInto = copyInto;
-    })(utility = application.utility || (application.utility = {}));
+        return Context;
+    }());
+    application.Context = Context;
+    var context = null;
+    function setup(module) {
+        context = new Context();
+    }
+    application.setup = setup;
 })(application || (application = {}));
 //# sourceMappingURL=application.js.map

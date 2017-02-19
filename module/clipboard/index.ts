@@ -1,23 +1,24 @@
 /**
  */
 
-/// <reference path="../../typings/index.d.ts" />
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
-/// <reference path="../../github/lib.json_broker/angular1.ts" />
-/// <reference path="clipboard.ts" />
-
+/// <reference path="../../github/lib.json_broker/json_broker.angular1.ts" />
+/// <reference path="../../ts/page.ts" />
+/// <reference path="../../typings/index.d.ts" />
 
 
 class ViewController {
 
+
     proxy: clipboard.ClipBoardProxy;
+
 
     constructor( $http: angular.IHttpService, $q:angular.IQService ) {
 
 
-        let requestHandler = json_broker.angular1.buildRequestHandler( $http, $q );
+        let brokerAdapter = json_broker.buildBrokerAdapter( $http, $q );
 
-        this.proxy = new clipboard.ClipBoardProxy(requestHandler);
+        this.proxy = new clipboard.ClipBoardProxy(brokerAdapter );
 
     }
 
@@ -55,16 +56,15 @@ class ViewController {
             }
         )
     }
-
 }
 
-var mcRemote= angular.module('McRemote', []);
-mcRemote.controller('index', ["$http", "$q", "$scope", function ( $http: angular.IHttpService, $q: angular.IQService, $scope) {
 
+var mcRemote= page.buildAngularModule();
+mcRemote.controller('index', ["$http", "$q", "$scope",
+    ( $http: angular.IHttpService, $q: angular.IQService, $scope) => {
 
     $scope.viewController = new ViewController( $http, $q );
     $scope.viewController.get_clipboard();
-
 
 }]);
 

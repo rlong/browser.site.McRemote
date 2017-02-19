@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="mc-remote">
+<html lang="en" ng-app="McRemote">
 <head>
 
-    <title>Template</title>
+    <title>Finder</title>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,13 +18,12 @@
     <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
     <script src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../node_modules/angular/angular.js"></script>
-    <script src="../../node_modules/angular-animate/angular-animate.min.js"></script>
-    <script src="../../node_modules/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="../../node_modules/angular-animate/angular-animate.js"></script>
+    <script src="../../node_modules/angular-bootstrap-npm/dist/angular-bootstrap-tpls.min.js"></script>
 
     <!-- TS libs -->
     <script src="../../component/popup.js"></script>
     <script src="../../github/lib.json_broker/json_broker.js"></script>
-    <script src="../../github/lib.json_broker/angular1.js"></script>
 
     <script src="../../ts/application.js"></script>
     <script src="../../ts/page.js"></script>
@@ -38,9 +37,6 @@
 
 
 
-<!--  {% include body-nav.navbar.html %} -->
-
-
 
 <div class="container" ng-controller="index">
 
@@ -52,14 +48,12 @@
                     <div>{{roots.current._name}} <span class="caret"></span></div>
                 </button>
                 <ul class="dropdown-menu" >
-                    <!--<li><a href="#">Something else here</a></li>-->
                     <li role="separator" class="divider"></li>
-                    <li ng-repeat="rootLocation in roots.places" ng-click="viewController.rootLocationOnSelect(rootLocation)">
+                    <li ng-repeat="rootLocation in viewController.roots.places" ng-click="viewController.rootLocationOnSelect(rootLocation)">
                         <a href="#"><i class="{{rootLocation._iconClass}}"></i> {{rootLocation._name}} <i ng-if="rootLocation === roots.current" class="fa fa-check"></i></a>
                     </li>
-                    <!--<li><a href="#">Separated link</a></li>-->
                     <li role="separator" class="divider"></li>
-                    <li ng-repeat="rootLocation in roots.disks" ng-click="viewController.rootLocationOnSelect(rootLocation)">
+                    <li ng-repeat="rootLocation in viewController.roots.disks" ng-click="viewController.rootLocationOnSelect(rootLocation)">
                         <a href="#"><i class="fa fa-hdd-o"></i> {{rootLocation._name}} <i ng-if="rootLocation === roots.current" class="fa fa-check"></i></a>
                     </li>
                 </ul>
@@ -131,7 +125,6 @@
 
 </div>
 
-<!-- {% endraw %} -->
 
 
 

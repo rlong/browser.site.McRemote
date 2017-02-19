@@ -5,12 +5,20 @@
 /// <reference path="../component/popup.ts" />
 var page;
 (function (page) {
-    var context;
-    (function (context) {
-        function setup(module) {
-            component.popup.setup(module);
+    function buildAngularModule() {
+        return angular.module('McRemote', ['ngAnimate', 'ui.bootstrap']);
+    }
+    page.buildAngularModule = buildAngularModule;
+    var Context = (function () {
+        function Context() {
         }
-        context.setup = setup;
-    })(context = page.context || (page.context = {}));
+        return Context;
+    }());
+    page.Context = Context;
+    function setup(module) {
+        page.context = new Context();
+        component.popup.setup(module);
+    }
+    page.setup = setup;
 })(page || (page = {}));
 //# sourceMappingURL=page.js.map

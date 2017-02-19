@@ -3,142 +3,187 @@
  */
 
 
-
-/// <reference path="../../typings/index.d.ts" />
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
 
 
+module finder {
 
-module com.apple.finder {
+    import IRequestHandler = json_broker.IRequestHandler;
+    import BrokerMessage = json_broker.BrokerMessage;
 
-    export module service {
+    const SERVICE_NAME = "remote_gateway.AppleScriptService:com.apple.finder";
 
+    export interface IPathComponent {
+        name: string;
+        path: string;
+    }
 
-        function buildTemplateReqest():json_broker.BrokerMessage {
+    export class Folder {
 
+        folderName: string = null;
+        folderPath: string = null;
+        folderPosixPath: string = null;
+        pathComponents: IPathComponent[] = [];
 
+        // filePath: FilePath = null; // new FilePath( "inbox", "scratch:rlong:Movies:inbox");
+        files: any[] = [];
+        folders: any[] = [];
 
-            var answer = new json_broker.BrokerMessage();
-            answer.messageType = "request";
-            answer.metaData = {};
-            answer.serviceName = "remote_gateway.AppleScriptService:finder";
-            answer.majorVersion = 1;
-            answer.minorVersion = 0;
-            answer.orderedParameters = [];
-            // answer.associativeParamaters = {};
+        constructor( folderPath: string, response: json_broker.BrokerMessage ) {
 
-            return answer;
+            let pojo: any = response.orderedParameters[0];
+            this.folderName = pojo._name;
+            this.folderPosixPath = pojo._posix_path;
+            this.files = pojo._files;
+            this.folders = pojo._folders;
 
-        }
+            {
+                var path = "";
+                var tokens = folderPath.split(":");
+                for( let tokenIndex in tokens ) {
 
+                    let token = tokens[tokenIndex];
+                    if( 0 === token.length ) {
+                        continue;
+                    }
 
-        export module list_roots {
-
-            export function invoke( $http:angular.IHttpService ) :angular.IHttpPromise<json_broker.BrokerMessage> {
-
-                let request:json_broker.BrokerMessage = buildTemplateReqest();
-                request.methodName = "list_roots";
-
-                return request.post($http);
-
+                    path += token + ":";
+                    this.pathComponents.push( {name:token, path:path} );
+                }
             }
+        }
+    }
+
+
+    // this.openFolderPath( "scratch:Users:local-rlong:Movies:inbox" );
+    //this.openFolderPath( "64G:Movies" );
+    export class Roots {
+
+        disks: IRootLocation[] = null;
+        places: IRootLocation[] = null;
+
+        constructor( brokerMessage: json_broker.BrokerMessage ) {
+
+            console.log( brokerMessage );
+            let pojo: any = brokerMessage.orderedParameters[0];
+            this.disks = pojo._disks;
+            this.places = pojo._places;
 
         }
-
-        //export function list_roots( $http:angular.IHttpService ) :angular.IHttpPromise<jsonbroker.BrokerMessage> {
-        //
-        //    let request:jsonbroker.BrokerMessage = buildTemplateReqest();
-        //    request.methodName = "list_roots";
-        //
-        //    return request.post($http);
-        //
-        //}
-
-        export module list_path {
-
-            export function invoke($http:angular.IHttpService, path: String ): angular.IHttpPromise<jsonbroker.BrokerMessage> {
-
-                let request:json_broker.BrokerMessage = buildTemplateReqest();
-                request.methodName = "list_path";
-                request.orderedParameters = [path];
-
-                return request.post($http);
-            }
-
-        }
-
-        export module ping {
-
-            export function invoke( $http:angular.IHttpService ) :angular.IHttpPromise<jsonbroker.BrokerMessage> {
-
-                let request:json_broker.BrokerMessage = buildTemplateReqest();
-                request.methodName = "ping";
-
-                return request.post($http);
-
-            }
-
-        }
-
-
 
     }
 
 
-    export class FinderProxy {
+    // export module service {
+    //
+    //
+    //     function buildTemplateReqest():json_broker.BrokerMessage {
+    //
+    //         var answer = new json_broker.BrokerMessage();
+    //         answer.messageType = "request";
+    //         answer.metaData = {};
+    //         answer.serviceName = "remote_gateway.AppleScriptService:finder";
+    //         answer.majorVersion = 1;
+    //         answer.minorVersion = 0;
+    //         answer.orderedParameters = [];
+    //         // answer.associativeParamaters = {};
+    //
+    //         return answer;
+    //
+    //     }
+    //
+    //
+    //     // export module list_roots {
+    //     //
+    //     //     export function invoke( $http:angular.IHttpService ) :angular.IHttpPromise<json_broker.BrokerMessage> {
+    //     //
+    //     //         let request:json_broker.BrokerMessage = buildTemplateReqest();
+    //     //         request.methodName = "list_roots";
+    //     //
+    //     //         return request.post($http);
+    //     //
+    //     //     }
+    //     //
+    //     // }
+    //     //
+    //     //export function list_roots( $http:angular.IHttpService ) :angular.IHttpPromise<jsonbroker.BrokerMessage> {
+    //     //
+    //     //    let request:jsonbroker.BrokerMessage = buildTemplateReqest();
+    //     //    request.methodName = "list_roots";
+    //     //
+    //     //    return request.post($http);
+    //     //
+    //     //}
+    //     //
+    //     // export module list_path {
+    //     //
+    //     //     export function invoke($http:angular.IHttpService, path: String ): angular.IHttpPromise<jsonbroker.BrokerMessage> {
+    //     //
+    //     //         let request:json_broker.BrokerMessage = buildTemplateReqest();
+    //     //         request.methodName = "list_path";
+    //     //         request.orderedParameters = [path];
+    //     //
+    //     //         return request.post($http);
+    //     //     }
+    //     //
+    //     // }
+    // }
 
-        //$http:angular.IHttpService;
-        //
-        //
-        //constructor($http:angular.IHttpService) {
-        //    this.$http = $http;
-        //}
-        //
-        //private static buildTemplateReqest():jsonbroker.BrokerMessage {
-        //    var answer = new jsonbroker.BrokerMessage();
-        //    answer.messageType = "request";
-        //    answer.metaData = {};
-        //    answer.serviceName = "remote_gateway.AppleScriptService:finder";
-        //    answer.majorVersion = 1;
-        //    answer.minorVersion = 0;
-        //    answer.orderedParamaters = [];
-        //
-        //    return answer;
-        //
-        //}
-        //
-        //
-        //list_roots():angular.IHttpPromise<any> {
-        //
-        //    let request:jsonbroker.BrokerMessage = FinderProxy.buildTemplateReqest();
-        //    request.methodName = "list_roots";
-        //
-        //    return request.post(this.$http);
-        //}
-        //
-        //list_rootsGetResponse(response: jsonbroker.IHttpResponse) {
-        //
-        //    let brokerMessage: jsonbroker.BrokerMessage = jsonbroker.BrokerMessage.buildFromHttpResponse( response );
-        //    return brokerMessage.orderedParamaters[0];
-        //
-        //}
-        //
-        //ping():angular.IHttpPromise<any> {
-        //
-        //    let request:jsonbroker.BrokerMessage = FinderProxy.buildTemplateReqest();
-        //    request.methodName = "ping";
-        //
-        //    return request.post(this.$http);
-        //}
-        //
-        //pingGetResponse(response: jsonbroker.IHttpResponse) {
-        //
-        //    let brokerMessage: jsonbroker.BrokerMessage = jsonbroker.BrokerMessage.buildFromHttpResponse( response );
-        //    return brokerMessage.orderedParamaters;
-        //
-        //}
 
+
+    export interface IRootLocation {
+        _name: string;
+        _path: string;
+        _iconClass?: string;
     }
 
+
+    export class Proxy {
+
+        adapter: json_broker.IBrokerAdapter;
+
+        constructor( adapter: json_broker.IBrokerAdapter ) {
+
+            this.adapter = adapter;
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+        // Test / Debugging
+        ///////////////////////////////////////////////////////////////////////
+
+        ping(): angular.IPromise<void> {
+
+            let request = json_broker.BrokerMessage.buildRequest( SERVICE_NAME, "ping" );
+
+            return this.adapter.dispatch( request ).then(
+                () => {}
+            );
+        }
+
+        list_path( path: string ) :angular.IPromise<Folder> {
+
+            let request:json_broker.BrokerMessage =
+                BrokerMessage.buildRequestWithOrderedParameters( SERVICE_NAME, "list_path", [path] );
+
+            return this.adapter.dispatch( request ).then(
+                (response:json_broker.BrokerMessage) => {
+                    return new Folder( path, response );
+                }
+            )
+        }
+
+        list_roots() :angular.IPromise<Roots> {
+
+            let request:json_broker.BrokerMessage =
+                BrokerMessage.buildRequestWithOrderedParameters( SERVICE_NAME, "list_roots" );
+
+            return this.adapter.dispatch( request ).then(
+                (response:json_broker.BrokerMessage) => {
+                    let roots = new Roots( response) ;
+                    return this.adapter.resolve( roots );
+                }
+            )
+        }
+    }
 
 }

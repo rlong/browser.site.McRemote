@@ -12,3 +12,7 @@
 # *.js
 # *.js.map
 
+# yarn/npm modules
+ 
+node_modules
+

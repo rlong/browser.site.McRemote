@@ -1,71 +1,82 @@
 /**
  * Created by rlong on 20/03/2016.
  */
-/// <reference path="../../typings/index.d.ts" />
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
-var com;
-(function (com) {
-    var apple;
-    (function (apple) {
-        var finder;
-        (function (finder) {
-            var service;
-            (function (service) {
-                function buildTemplateReqest() {
-                    var answer = new json_broker.BrokerMessage();
-                    answer.messageType = "request";
-                    answer.metaData = {};
-                    answer.serviceName = "remote_gateway.AppleScriptService:finder";
-                    answer.majorVersion = 1;
-                    answer.minorVersion = 0;
-                    answer.orderedParameters = [];
-                    // answer.associativeParamaters = {};
-                    return answer;
+var finder;
+(function (finder) {
+    var BrokerMessage = json_broker.BrokerMessage;
+    var SERVICE_NAME = "remote_gateway.AppleScriptService:com.apple.finder";
+    var Folder = (function () {
+        function Folder(folderPath, response) {
+            this.folderName = null;
+            this.folderPath = null;
+            this.folderPosixPath = null;
+            this.pathComponents = [];
+            // filePath: FilePath = null; // new FilePath( "inbox", "scratch:rlong:Movies:inbox");
+            this.files = [];
+            this.folders = [];
+            var pojo = response.orderedParameters[0];
+            this.folderName = pojo._name;
+            this.folderPosixPath = pojo._posix_path;
+            this.files = pojo._files;
+            this.folders = pojo._folders;
+            {
+                var path = "";
+                var tokens = folderPath.split(":");
+                for (var tokenIndex in tokens) {
+                    var token = tokens[tokenIndex];
+                    if (0 === token.length) {
+                        continue;
+                    }
+                    path += token + ":";
+                    this.pathComponents.push({ name: token, path: path });
                 }
-                var list_roots;
-                (function (list_roots) {
-                    function invoke($http) {
-                        var request = buildTemplateReqest();
-                        request.methodName = "list_roots";
-                        return request.post($http);
-                    }
-                    list_roots.invoke = invoke;
-                })(list_roots = service.list_roots || (service.list_roots = {}));
-                //export function list_roots( $http:angular.IHttpService ) :angular.IHttpPromise<jsonbroker.BrokerMessage> {
-                //
-                //    let request:jsonbroker.BrokerMessage = buildTemplateReqest();
-                //    request.methodName = "list_roots";
-                //
-                //    return request.post($http);
-                //
-                //}
-                var list_path;
-                (function (list_path) {
-                    function invoke($http, path) {
-                        var request = buildTemplateReqest();
-                        request.methodName = "list_path";
-                        request.orderedParameters = [path];
-                        return request.post($http);
-                    }
-                    list_path.invoke = invoke;
-                })(list_path = service.list_path || (service.list_path = {}));
-                var ping;
-                (function (ping) {
-                    function invoke($http) {
-                        var request = buildTemplateReqest();
-                        request.methodName = "ping";
-                        return request.post($http);
-                    }
-                    ping.invoke = invoke;
-                })(ping = service.ping || (service.ping = {}));
-            })(service = finder.service || (finder.service = {}));
-            var FinderProxy = (function () {
-                function FinderProxy() {
-                }
-                return FinderProxy;
-            }());
-            finder.FinderProxy = FinderProxy;
-        })(finder = apple.finder || (apple.finder = {}));
-    })(apple = com.apple || (com.apple = {}));
-})(com || (com = {}));
+            }
+        }
+        return Folder;
+    }());
+    finder.Folder = Folder;
+    // this.openFolderPath( "scratch:Users:local-rlong:Movies:inbox" );
+    //this.openFolderPath( "64G:Movies" );
+    var Roots = (function () {
+        function Roots(brokerMessage) {
+            this.disks = null;
+            this.places = null;
+            console.log(brokerMessage);
+            var pojo = brokerMessage.orderedParameters[0];
+            this.disks = pojo._disks;
+            this.places = pojo._places;
+        }
+        return Roots;
+    }());
+    finder.Roots = Roots;
+    var Proxy = (function () {
+        function Proxy(adapter) {
+            this.adapter = adapter;
+        }
+        ///////////////////////////////////////////////////////////////////////
+        // Test / Debugging
+        ///////////////////////////////////////////////////////////////////////
+        Proxy.prototype.ping = function () {
+            var request = json_broker.BrokerMessage.buildRequest(SERVICE_NAME, "ping");
+            return this.adapter.dispatch(request).then(function () { });
+        };
+        Proxy.prototype.list_path = function (path) {
+            var request = BrokerMessage.buildRequestWithOrderedParameters(SERVICE_NAME, "list_path", [path]);
+            return this.adapter.dispatch(request).then(function (response) {
+                return new Folder(path, response);
+            });
+        };
+        Proxy.prototype.list_roots = function () {
+            var _this = this;
+            var request = BrokerMessage.buildRequestWithOrderedParameters(SERVICE_NAME, "list_roots");
+            return this.adapter.dispatch(request).then(function (response) {
+                var roots = new Roots(response);
+                return _this.adapter.resolve(roots);
+            });
+        };
+        return Proxy;
+    }());
+    finder.Proxy = Proxy;
+})(finder || (finder = {}));
 //# sourceMappingURL=com.apple.finder.js.map

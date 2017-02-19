@@ -2,14 +2,18 @@
  * Created by local-rlong on 07/06/2016.
  */
 /// <reference path="../typings/index.d.ts" />
-/// <reference path="../component/component.popup.ts" />
 var session;
 (function (session) {
-    var context;
-    (function (context) {
-        function setup(module) {
+    var Context = (function () {
+        function Context() {
         }
-        context.setup = setup;
-    })(context = session.context || (session.context = {}));
+        return Context;
+    }());
+    session.Context = Context;
+    var context = null;
+    function setup(module) {
+        context = new Context();
+    }
+    session.setup = setup;
 })(session || (session = {}));
 //# sourceMappingURL=session.js.map

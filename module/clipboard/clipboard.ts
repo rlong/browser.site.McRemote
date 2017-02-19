@@ -3,42 +3,39 @@
  */
 
 
-
-/// <reference path="../../typings/index.d.ts" />
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
-
 
 
 module clipboard {
 
     const SERVICE_NAME = "remote_gateway.AppleScriptService:clipboard";
 
-    import IRequestHandler = json_broker.IRequestHandler;
-    import BrokerMessage = json_broker.BrokerMessage;
+
 
     export class ClipBoardProxy {
 
-        requestHandler: IRequestHandler;
+        adapter: json_broker.IBrokerAdapter;
 
-        constructor( requestHandler: IRequestHandler ) {
+        constructor( messageBrokerAdapter: json_broker.IBrokerAdapter ) {
 
-            this.requestHandler = requestHandler;
+            this.adapter = messageBrokerAdapter;
         }
 
-        ping(): Promise<void> {
+        ping(): angular.IPromise<void> {
 
-            let request = BrokerMessage.buildRequest( SERVICE_NAME, "ping" );
+            let request = json_broker.BrokerMessage.buildRequest( SERVICE_NAME, "ping" );
 
-            return this.requestHandler.dispatch( request ).then(
+            return this.adapter.dispatch( request ).then(
                 () => {}
             );
         }
 
-        get_clipboard(): Promise<string> {
-            let request = BrokerMessage.buildRequest( SERVICE_NAME, "get_clipboard" );
 
-            return this.requestHandler.dispatch( request ).then(
-                (promiseValue:BrokerMessage) => {
+        get_clipboard(): angular.IPromise<string> {
+            let request = json_broker.BrokerMessage.buildRequest( SERVICE_NAME, "get_clipboard" );
+
+            return this.adapter.dispatch( request ).then(
+                (promiseValue:json_broker.BrokerMessage) => {
 
                     console.log( promiseValue );
 
@@ -48,19 +45,17 @@ module clipboard {
 
         }
 
-        set_clipboard( clipboardValue: string ): Promise<void>  {
-            let request = BrokerMessage.buildRequest( SERVICE_NAME, "set_clipboard" );
+        set_clipboard( clipboardValue: string ): angular.IPromise<void>  {
+
+            let request = json_broker.BrokerMessage.buildRequest( SERVICE_NAME, "set_clipboard" );
             request.orderedParameters = [clipboardValue];
 
-            return this.requestHandler.dispatch( request ).then(
+            return this.adapter.dispatch( request ).then(
                 () => {}
             );
-
         }
 
     }
-
-
 
 
 

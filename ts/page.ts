@@ -7,13 +7,27 @@
 /// <reference path="../typings/index.d.ts" />
 /// <reference path="../component/popup.ts" />
 
-
 namespace page {
 
-    export namespace context {
 
-        export function setup( module: angular.IModule ) {
-            component.popup.setup( module );
-        }
+    export function buildAngularModule(): angular.IModule {
+
+        return angular.module('McRemote', ['ngAnimate', 'ui.bootstrap']);
     }
+
+
+    export class Context {
+
+    }
+
+    export var context: Context;
+
+    export function setup( module: angular.IModule ) {
+
+        context = new Context();
+        component.popup.setup( module );
+
+    }
+
+
 }

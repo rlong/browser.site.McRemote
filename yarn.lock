@@ -2,13 +2,29 @@
 # yarn lockfile v1
 
 
+"@types/angular-ui-bootstrap@^0.13.40":
+  version "0.13.40"
+  resolved "https://registry.yarnpkg.com/@types/angular-ui-bootstrap/-/angular-ui-bootstrap-0.13.40.tgz#6b9fb0093393d0a9d40ab0c12e2ef63fc593e0df"
+  dependencies:
+    "@types/angular" "*"
+
+"@types/angular@*", "@types/angular@^1.6.6":
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.6.tgz#5009a7f58542e3325c4b5a8f12c06c2dd8eedd38"
+  dependencies:
+    "@types/jquery" "*"
+
+"@types/jquery@*":
+  version "2.0.40"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-2.0.40.tgz#acdd69e29b74cdec15dc3c074bcb064bc1b87213"
+
 angular-animate@^1.6.2:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.6.2.tgz#def2a8b9ede53b4b6e234c25f5c64e4b4385df15"
 
-angular-bootstrap@^0.12.2:
-  version "0.12.2"
-  resolved "https://registry.yarnpkg.com/angular-bootstrap/-/angular-bootstrap-0.12.2.tgz#de9900a7db087a7e9da47304a9c2f77f9c069827"
+angular-bootstrap-npm@^0.14.3:
+  version "0.14.3"
+  resolved "https://registry.yarnpkg.com/angular-bootstrap-npm/-/angular-bootstrap-npm-0.14.3.tgz#1c18d49322adf5b5870ffb927f41dfc28ff6e579"
 
 angular@^1.6.2:
   version "1.6.2"

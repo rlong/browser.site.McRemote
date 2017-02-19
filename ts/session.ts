@@ -5,18 +5,20 @@
 
 
 /// <reference path="../typings/index.d.ts" />
-/// <reference path="../component/component.popup.ts" />
 
 
 namespace session {
 
-    export namespace context {
 
-        export function setup( module: angular.IModule ) {
+    export class Context {
 
-        }
     }
 
+    var context: Context = null;
 
+    export function setup( module: angular.IModule ) {
+
+        context = new Context();
+    }
 
 }

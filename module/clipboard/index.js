@@ -1,14 +1,14 @@
 /**
  */
-/// <reference path="../../typings/index.d.ts" />
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
-/// <reference path="../../github/lib.json_broker/angular1.ts" />
-/// <reference path="clipboard.ts" />
+/// <reference path="../../github/lib.json_broker/json_broker.angular1.ts" />
+/// <reference path="../../ts/page.ts" />
+/// <reference path="../../typings/index.d.ts" />
 var ViewController = (function () {
     function ViewController($http, $q) {
         this.clipboardAsText = "";
-        var requestHandler = json_broker.angular1.buildRequestHandler($http, $q);
-        this.proxy = new clipboard.ClipBoardProxy(requestHandler);
+        var brokerAdapter = json_broker.buildBrokerAdapter($http, $q);
+        this.proxy = new clipboard.ClipBoardProxy(brokerAdapter);
     }
     ViewController.prototype.copyButtonOnClick = function () {
         this.get_clipboard();
@@ -31,9 +31,9 @@ var ViewController = (function () {
     };
     return ViewController;
 }());
-var mcRemote = angular.module('McRemote', []);
-mcRemote.controller('index', ["$http", "$q", "$scope", function ($http, $q, $scope) {
+var mcRemote = page.buildAngularModule();
+mcRemote.controller('index', ["$http", "$q", "$scope",
+    function ($http, $q, $scope) {
         $scope.viewController = new ViewController($http, $q);
         $scope.viewController.get_clipboard();
     }]);
-//# sourceMappingURL=index.js.map
