@@ -11,176 +11,48 @@
 
 
 
-
-    // export namespace model {
-    //
-    //
-    //
-    //     // export interface IHttpPromiseErrorHandler {
-    //     //     handleHttpPromiseError( origin:any, callee: any, reason:any);
-    //     // }
-    //     //
-    //     // export class CurrentFolder {
-    //     //
-    //     //     $http: angular.IHttpService = null;
-    //     //
-    //     //     folderName: string = null;
-    //     //     folderPath: string = null;
-    //     //     folderPosixPath: string = null;
-    //     //     pathComponents: IPathComponent[] = [];
-    //     //     httpPromiseErrorHandler: IHttpPromiseErrorHandler = null;
-    //     //
-    //     //     // filePath: FilePath = null; // new FilePath( "inbox", "scratch:rlong:Movies:inbox");
-    //     //     files: any[] = [];
-    //     //     folders: any[] = [];
-    //     //
-    //     //     constructor( $http: angular.IHttpService ) {
-    //     //
-    //     //         this.$http = $http;
-    //     //
-    //     //         // this.openFolderPath( "scratch:Users:local-rlong:Movies:inbox" );
-    //     //         //this.openFolderPath( "64G:Movies" );
-    //     //         //this.openFolderPath( "64G:Movies" );
-    //     //
-    //     //     }
-    //     //
-    //     //     public openFolderPath( folderPath: string ): angular.IHttpPromise<CurrentFolder> {
-    //     //
-    //     //         this.folderPath = folderPath;
-    //     //         this.files = [];
-    //     //         this.folders = [];
-    //     //
-    //     //         this.pathComponents = [];
-    //     //         {
-    //     //             var path = "";
-    //     //             var tokens = folderPath.split(":");
-    //     //             for( let tokenIndex in tokens ) {
-    //     //
-    //     //                 let token = tokens[tokenIndex];
-    //     //                 if( 0 === token.length ) {
-    //     //                     continue;
-    //     //                 }
-    //     //
-    //     //                 path += token + ":";
-    //     //                 this.pathComponents.push( {name:token, path:path} );
-    //     //             }
-    //     //         }
-    //     //         console.log( this.pathComponents );
-    //     //
-    //     //
-    //     //         return finder.service.list_path.invoke( this.$http, this.folderPath ).then<CurrentFolder>(
-    //     //
-    //     //             ( promiseValue: jsonbroker.BrokerMessage ) =>  { // successCallback
-    //     //
-    //     //                 console.log( promiseValue );
-    //     //
-    //     //                 let pojo: any = promiseValue.orderedParamaters[0];
-    //     //                 this.folderName = pojo._name;
-    //     //                 this.folderPosixPath = pojo._posix_path;
-    //     //                 this.files = pojo._files;
-    //     //                 this.folders = pojo._folders;
-    //     //                 return this;
-    //     //
-    //     //             }
-    //     //             ,(reason: any) => { // errorCallback
-    //     //
-    //     //                 if( this.httpPromiseErrorHandler ) {
-    //     //                     this.httpPromiseErrorHandler.handleHttpPromiseError( this, this.openFolderPath, reason );
-    //     //                 }
-    //     //                 return reason;
-    //     //
-    //     //             }
-    //     //         )
-    //     //
-    //     //     }
-    //     //
-    //     // }
-    //     //
-    //     //
-    //     // export interface IRootLocation {
-    //     //     _name: string;
-    //     //     _path: string;
-    //     //     _iconClass?: string;
-    //     // }
-    //     //
-    //     //
-    //     //
-    //     // export class Roots {
-    //     //
-    //     //     disks: IRootLocation[] = null;
-    //     //     places: IRootLocation[] = null;
-    //     //
-    //     //     current: IRootLocation = null;
-    //     //
-    //     //     $http:angular.IHttpService = null;
-    //     //
-    //     //     constructor( $http: angular.IHttpService ) {
-    //     //
-    //     //         this.$http = $http;
-    //     //
-    //     //
-    //     //         // this.openFolderPath( "scratch:Users:local-rlong:Movies:inbox" );
-    //     //         //this.openFolderPath( "64G:Movies" );
-    //     //
-    //     //
-    //     //     }
-    //     //
-    //     //     public list_roots() {
-    //     //
-    //     //         finder.service.list_roots.invoke( this.$http ).then(
-    //     //
-    //     //             ( promiseValue: jsonbroker.BrokerMessage ) => { // successCallback
-    //     //
-    //     //                 console.log( promiseValue );
-    //     //                 let pojo: any = promiseValue.orderedParamaters[0];
-    //     //                 this.disks = pojo._disks;
-    //     //                 console.log( this.disks );
-    //     //                 this.places = pojo._places;
-    //     //                 console.log( this.places );
-    //     //
-    //     //                 this.current = this.disks[0];
-    //     //
-    //     //             },
-    //     //             (reason: any) => { // errorCallback
-    //     //
-    //     //                 console.error( reason );
-    //     //
-    //     //             }
-    //     //
-    //     //         );
-    //     //
-    //     //     }
-    //     //
-    //     // }
-    //
-    // }
-
 class ViewController {
 
-
-    currentFolder: finder.Folder = null;
-    roots: finder.Roots = null;
-    proxy: finder.Proxy;
+    $uibModal: angular.ui.bootstrap.IModalService = null
 
     brokerAdapter: json_broker.IBrokerAdapter;
-    $uibModal: angular.ui.bootstrap.IModalService = null
+
+    proxy: finder.Proxy;
+
+    roots: finder.Roots = null;
+    currentRoot: finder.IRootLocation = null;
+
+    currentFolder: finder.Folder = null;
+
 
     constructor( brokerAdapter: json_broker.IBrokerAdapter, $uibModal: angular.ui.bootstrap.IModalService ) {
 
         this.proxy = new finder.Proxy( brokerAdapter );
 
-        // this.currentFolder = ;
-        // this.currentFolder.httpPromiseErrorHandler = this;
-        // this.currentFolder.openFolderPath( "64G:Movies:" );
-        //
-        // this.roots = new model.Roots( $http );
-        // this.roots.list_roots();
-        //
-        // this.$http = $http;
-        // this.$uibModal = $uibModal;
+        this.setupRootsAndCurrentFolder();
 
-        this.list_roots();
 
+    }
+
+    setupRootsAndCurrentFolder() {
+
+        this.proxy.list_roots().then(
+            (roots: finder.Roots) => {
+                console.log( roots );
+                this.roots = roots;
+                this.currentRoot = roots.places[0];
+
+                return this.proxy.list_path( this.currentRoot._path );
+            },
+            ( reason ) => {
+                console.error( reason );
+            }
+        ).then(
+            ( folder: finder.Folder ) => {
+                console.log( folder );
+                this.currentFolder = folder;
+            }
+        )
     }
 
 
@@ -203,6 +75,19 @@ class ViewController {
     }
 
 
+    public openFolderItem( folderItem: finder.FolderItem ) {
+
+        this.proxy.list( this.currentFolder, folderItem ).then(
+            (folder:finder.Folder) => {
+
+                this.currentFolder = folder;
+            },
+            ( reason ) => {
+                console.error( reason );
+            }
+        )
+
+    }
 
     public openFolderPath( folderPath: string ) {
         console.log( arguments );
@@ -231,6 +116,10 @@ class ViewController {
         console.log( pathComponent );
         // this.currentFolder.openFolderPath( pathComponent.path );
 
+    }
+
+    public folderOnClick( folder ) {
+        console.log( folder );
     }
 
     public fileButtonOnClick( file ) {

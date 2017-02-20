@@ -1,9 +1,7 @@
 /**
  */
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
-/// <reference path="../../github/lib.json_broker/json_broker.angular1.ts" />
 /// <reference path="../../ts/page.ts" />
-/// <reference path="../../typings/index.d.ts" />
 var ViewController = (function () {
     function ViewController($http, $q) {
         this.clipboardAsText = "";
@@ -18,6 +16,7 @@ var ViewController = (function () {
         this.proxy.get_clipboard().then(function (promiseValue) {
             console.log(promiseValue);
             self.clipboardAsText = promiseValue;
+            // window.prompt("clipboard:", promiseValue);
         }, function (reason) {
             console.error(reason);
         });
@@ -37,3 +36,4 @@ mcRemote.controller('index', ["$http", "$q", "$scope",
         $scope.viewController = new ViewController($http, $q);
         $scope.viewController.get_clipboard();
     }]);
+//# sourceMappingURL=index.js.map

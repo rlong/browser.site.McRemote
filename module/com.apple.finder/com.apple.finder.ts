@@ -18,21 +18,27 @@ module finder {
         path: string;
     }
 
+    export class FolderItem {
+        _name: string;
+        _size?: number;
+    }
+
+
     export class Folder {
 
         folderName: string = null;
-        folderPath: string = null;
+        _folder_path: string = null;
         folderPosixPath: string = null;
         pathComponents: IPathComponent[] = [];
 
-        // filePath: FilePath = null; // new FilePath( "inbox", "scratch:rlong:Movies:inbox");
-        files: any[] = [];
-        folders: any[] = [];
+        files: FolderItem[] = [];
+        folders: FolderItem[] = [];
 
         constructor( folderPath: string, response: json_broker.BrokerMessage ) {
 
             let pojo: any = response.orderedParameters[0];
             this.folderName = pojo._name;
+            this._folder_path = pojo._folder_path;
             this.folderPosixPath = pojo._posix_path;
             this.files = pojo._files;
             this.folders = pojo._folders;
@@ -54,6 +60,12 @@ module finder {
         }
     }
 
+    export interface IRootLocation {
+        _name: string;
+        _path: string;
+        _iconClass: string;
+    }
+
 
     // this.openFolderPath( "scratch:Users:local-rlong:Movies:inbox" );
     //this.openFolderPath( "64G:Movies" );
@@ -70,72 +82,9 @@ module finder {
             this.places = pojo._places;
 
         }
-
     }
 
 
-    // export module service {
-    //
-    //
-    //     function buildTemplateReqest():json_broker.BrokerMessage {
-    //
-    //         var answer = new json_broker.BrokerMessage();
-    //         answer.messageType = "request";
-    //         answer.metaData = {};
-    //         answer.serviceName = "remote_gateway.AppleScriptService:finder";
-    //         answer.majorVersion = 1;
-    //         answer.minorVersion = 0;
-    //         answer.orderedParameters = [];
-    //         // answer.associativeParamaters = {};
-    //
-    //         return answer;
-    //
-    //     }
-    //
-    //
-    //     // export module list_roots {
-    //     //
-    //     //     export function invoke( $http:angular.IHttpService ) :angular.IHttpPromise<json_broker.BrokerMessage> {
-    //     //
-    //     //         let request:json_broker.BrokerMessage = buildTemplateReqest();
-    //     //         request.methodName = "list_roots";
-    //     //
-    //     //         return request.post($http);
-    //     //
-    //     //     }
-    //     //
-    //     // }
-    //     //
-    //     //export function list_roots( $http:angular.IHttpService ) :angular.IHttpPromise<jsonbroker.BrokerMessage> {
-    //     //
-    //     //    let request:jsonbroker.BrokerMessage = buildTemplateReqest();
-    //     //    request.methodName = "list_roots";
-    //     //
-    //     //    return request.post($http);
-    //     //
-    //     //}
-    //     //
-    //     // export module list_path {
-    //     //
-    //     //     export function invoke($http:angular.IHttpService, path: String ): angular.IHttpPromise<jsonbroker.BrokerMessage> {
-    //     //
-    //     //         let request:json_broker.BrokerMessage = buildTemplateReqest();
-    //     //         request.methodName = "list_path";
-    //     //         request.orderedParameters = [path];
-    //     //
-    //     //         return request.post($http);
-    //     //     }
-    //     //
-    //     // }
-    // }
-
-
-
-    export interface IRootLocation {
-        _name: string;
-        _path: string;
-        _iconClass?: string;
-    }
 
 
     export class Proxy {
@@ -170,6 +119,13 @@ module finder {
                     return new Folder( path, response );
                 }
             )
+        }
+
+        list( parent: Folder, child: FolderItem ):angular.IPromise<Folder> {
+
+            let path = parent._folder_path + child._name + ":";
+            return this.list_path( path );
+
         }
 
         list_roots() :angular.IPromise<Roots> {

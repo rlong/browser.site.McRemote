@@ -45,24 +45,21 @@
         <div class="col-xs-3">
             <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div>{{roots.current._name}} <span class="caret"></span></div>
+                    <div><i class="{{viewController.currentRoot._iconClass}}"></i> {{viewController.currentRoot._name}} <span class="caret"></span></div>
                 </button>
                 <ul class="dropdown-menu" >
                     <li role="separator" class="divider"></li>
                     <li ng-repeat="rootLocation in viewController.roots.places" ng-click="viewController.rootLocationOnSelect(rootLocation)">
-                        <a href="#"><i class="{{rootLocation._iconClass}}"></i> {{rootLocation._name}} <i ng-if="rootLocation === roots.current" class="fa fa-check"></i></a>
+                        <a href="#"><i class="{{rootLocation._iconClass}}"></i> {{rootLocation._name}} <i ng-if="rootLocation === viewController.currentRoot" class="fa fa-check"></i></a>
                     </li>
                     <li role="separator" class="divider"></li>
                     <li ng-repeat="rootLocation in viewController.roots.disks" ng-click="viewController.rootLocationOnSelect(rootLocation)">
-                        <a href="#"><i class="fa fa-hdd-o"></i> {{rootLocation._name}} <i ng-if="rootLocation === roots.current" class="fa fa-check"></i></a>
+                        <a href="#"><i class="{{rootLocation._iconClass}}"></i> {{rootLocation._name}} <i ng-if="rootLocation === viewController.currentRoot" class="fa fa-check"></i></a>
                     </li>
                 </ul>
             </div>
         </div>
 
-        <div class="col-xs-9">
-            <h2><span class="glyphicon glyphicon-folder-open"></span> {{currentFolder.folderName}}</h2>
-        </div>
     </div>
 
     <div class="row">
@@ -72,10 +69,10 @@
     <div class="row">
         <div class="col-xs-12">
             <ol class="breadcrumb">
-                <li ng-repeat="pathComponent in currentFolder.pathComponents" ng-if="!$last">
+                <li ng-repeat="pathComponent in viewController.currentFolder.pathComponents" ng-if="!$last">
                     <a ng-if="!$last" ng-click="viewController.breadcrumbOnClick(pathComponent)">{{pathComponent.name}}</a>
                 </li>
-                <li ng-repeat="pathComponent in currentFolder.pathComponents" ng-if="$last" class="active">
+                <li ng-repeat="pathComponent in viewController.currentFolder.pathComponents" ng-if="$last" class="active">
                     {{pathComponent.name}}
                 </li>
             </ol>
@@ -83,14 +80,12 @@
     </div>
 
 
-
     <div>
-
-        <div class="row" ng-repeat="folder in currentFolder.folders">
+        <div class="row" ng-repeat="folderItem in viewController.currentFolder.folders">
             <div class="col-xs-12">
-                <button class="btn btn-default" ng-click="viewController.openFolder(folder)" style="width: 100%;">
+                <button class="btn btn-default" ng-click="viewController.openFolderItem(folderItem)" style="width: 100%;">
                     <div class="pull-left">
-                        <span class="glyphicon glyphicon-folder-close"></span> {{folder._name}}
+                        <span class="glyphicon glyphicon-folder-close"></span> {{folderItem._name}}
                     </div>
                 </button>
             </div>
@@ -107,7 +102,7 @@
     </div>
 
     <div>
-        <div class="row" ng-repeat="file in currentFolder.files">
+        <div class="row" ng-repeat="file in viewController.currentFolder.files">
             <div class="col-xs-12">
                 <button class="btn btn-default" ng-click="viewController.fileButtonOnClick( file )" style="width: 100%;">
                     <div class="pull-left">

@@ -2,9 +2,7 @@
  */
 
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
-/// <reference path="../../github/lib.json_broker/json_broker.angular1.ts" />
 /// <reference path="../../ts/page.ts" />
-/// <reference path="../../typings/index.d.ts" />
 
 
 class ViewController {
@@ -37,6 +35,7 @@ class ViewController {
 
                 console.log( promiseValue );
                 self.clipboardAsText = promiseValue;
+                // window.prompt("clipboard:", promiseValue);
 
             },
             (reason) => {

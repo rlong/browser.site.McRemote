@@ -6,17 +6,23 @@ var finder;
 (function (finder) {
     var BrokerMessage = json_broker.BrokerMessage;
     var SERVICE_NAME = "remote_gateway.AppleScriptService:com.apple.finder";
+    var FolderItem = (function () {
+        function FolderItem() {
+        }
+        return FolderItem;
+    }());
+    finder.FolderItem = FolderItem;
     var Folder = (function () {
         function Folder(folderPath, response) {
             this.folderName = null;
-            this.folderPath = null;
+            this._folder_path = null;
             this.folderPosixPath = null;
             this.pathComponents = [];
-            // filePath: FilePath = null; // new FilePath( "inbox", "scratch:rlong:Movies:inbox");
             this.files = [];
             this.folders = [];
             var pojo = response.orderedParameters[0];
             this.folderName = pojo._name;
+            this._folder_path = pojo._folder_path;
             this.folderPosixPath = pojo._posix_path;
             this.files = pojo._files;
             this.folders = pojo._folders;
@@ -66,6 +72,10 @@ var finder;
             return this.adapter.dispatch(request).then(function (response) {
                 return new Folder(path, response);
             });
+        };
+        Proxy.prototype.list = function (parent, child) {
+            var path = parent._folder_path + child._name + ":";
+            return this.list_path(path);
         };
         Proxy.prototype.list_roots = function () {
             var _this = this;
