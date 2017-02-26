@@ -1,0 +1,66 @@
+<!DOCTYPE html >
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="../../node_modules/angular/angular.js"></script>
+    <script src="../../node_modules/angular-animate/angular-animate.js"></script>
+    <script src="../../node_modules/angular-bootstrap-npm/dist/angular-bootstrap-tpls.min.js"></script>
+    <script src="../../js/angular-ui-router/angular-ui-router.min.js"></script>
+
+
+    <script src="../../ts/application.js"></script>
+    <script src="../../ts/session.js"></script>
+    <script src="../../ts/page.js"></script>
+
+    <script src="index.js"></script>
+
+</head>
+
+
+
+<div ng-app="McRemote" >
+
+
+    <div ng-controller="index">
+        {{variable}}
+    </div>
+
+    <hr>
+
+    <br>
+    <a ui-sref="hello" ui-sref-active="active">Hello</a>
+    &nbsp;
+    <a ui-sref="bye" ui-sref-active="active">Bye</a>
+    &nbsp;
+    <a ui-sref="about" ui-sref-active="active">About</a>
+    &nbsp;
+    <a ui-sref="list({path:'xxx'})" ui-sref-active="active">List</a>
+    &nbsp;
+
+
+    <ui-view></ui-view>
+
+</div>
+
+
+
+<hr>
+
+<div ng-app="hellosolarsystem">
+
+    <div><button onClick="document.location.reload(true)">reload plunker (without changing the url)</button></div>
+
+    <a ui-sref="hello" ui-sref-active="active">Hello</a>
+    <a ui-sref="about" ui-sref-active="active">About</a>
+    <a ui-sref="people" ui-sref-active="active">People</a>
+
+
+    <ui-view></ui-view>
+
+    <uir-state-vis class="statevis" width="300" height="100"></uir-state-vis>
+</div>
+
+</body>
+</html>

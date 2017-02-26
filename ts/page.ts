@@ -4,7 +4,6 @@
 
 
 
-/// <reference path="../typings/index.d.ts" />
 /// <reference path="../component/popup.ts" />
 
 namespace page {
@@ -12,7 +11,7 @@ namespace page {
 
     export function buildAngularModule(): angular.IModule {
 
-        return angular.module('McRemote', ['ngAnimate', 'ui.bootstrap']);
+        return angular.module('McRemote', ['ngAnimate', 'ui.bootstrap', "ui.router"]);
     }
 
 

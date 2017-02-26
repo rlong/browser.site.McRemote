@@ -1,8 +1,0 @@
-# OS X
-.DS_Store
-
-# JetBrains WebStorm
-.idea/
-
-# emacs 
-*~
