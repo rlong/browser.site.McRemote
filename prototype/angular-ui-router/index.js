@@ -40,6 +40,19 @@ mcRemote.component('list', {
         };
     }
 });
+mcRemote.component('templateUrllist', {
+    templateUrl: 'templateUrllist.html',
+    controller: function ($scope, $stateParams) {
+        console.log($scope);
+        console.log($stateParams);
+        console.log($stateParams.path);
+        this.path = $stateParams.path;
+        this.greeting = 'cruel world';
+        this.toggleGreeting = function () {
+            this.greeting = (this.greeting == 'hello') ? 'whats up' : 'hello';
+        };
+    }
+});
 mcRemote.config(function ($stateProvider) {
     {
         var helloState = {
@@ -64,6 +77,14 @@ mcRemote.config(function ($stateProvider) {
             template: '<h3>Its the UI-Router hello world app!</h3>'
         };
         $stateProvider.state(aboutState);
+    }
+    {
+        var templateUrllist = {
+            name: 'templateUrllist',
+            url: 'templateUrllist/{path}',
+            component: 'templateUrllist'
+        };
+        $stateProvider.state(templateUrllist);
     }
     {
         var listState = {
