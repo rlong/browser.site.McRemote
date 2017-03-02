@@ -1,0 +1,86 @@
+
+<h3>filePicker</h3>
+
+
+<div class="row">
+
+    <div class="col-xs-3">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div><i class="{{viewController.currentRoot._iconClass}}"></i> {{viewController.currentRoot._name}} <span class="caret"></span></div>
+            </button>
+            <ul class="dropdown-menu" >
+                <li role="separator" class="divider"></li>
+                <li ng-repeat="rootLocation in viewController.roots.places" ng-click="viewController.rootLocationOnSelect(rootLocation)">
+                    <a href="#"><i class="{{rootLocation._iconClass}}"></i> {{rootLocation._name}} <i ng-if="rootLocation === viewController.currentRoot" class="fa fa-check"></i></a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li ng-repeat="rootLocation in viewController.roots.disks" ng-click="viewController.rootLocationOnSelect(rootLocation)">
+                    <a href="#"><i class="{{rootLocation._iconClass}}"></i> {{rootLocation._name}} <i ng-if="rootLocation === viewController.currentRoot" class="fa fa-check"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <hr>
+</div>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <ol class="breadcrumb">
+
+            <li ng-repeat="pathComponent in viewController.currentFolder.pathComponents" ng-if="!$last">
+                <a ui-sref="filePicker({path:pathComponent.path})">
+                    {{pathComponent.name}}
+                </a>
+            </li>
+            <li ng-repeat="pathComponent in viewController.currentFolder.pathComponents" ng-if="$last" class="active">
+                {{pathComponent.name}}
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+<div>
+    <div class="row" ng-repeat="folderItem in viewController.currentFolder.folders">
+        <div class="col-xs-12">
+            <button class="btn btn-default" ng-click="viewController.openFolderItem(folderItem)" style="width: 100%;">
+                <div class="pull-left">
+                    <span class="glyphicon glyphicon-folder-close"></span> {{folderItem._name}}
+                </div>
+            </button>
+        </div>
+    </div>
+    <div class="row" ng-if="0===currentFolder.folders.length">
+        <div class="col-xs-12">
+            No folders
+        </div>
+    </div>
+</div>
+
+<div>
+    <hr>
+</div>
+
+<div>
+    <div class="row" ng-repeat="file in viewController.currentFolder.files">
+        <div class="col-xs-12">
+            <button class="btn btn-default" ng-click="viewController.fileButtonOnClick( file )" style="width: 100%;">
+                <div class="pull-left">
+                    <span class="glyphicon glyphicon-file"></span> {{file._name}}
+                </div>
+            </button>
+        </div>
+    </div>
+    <div class="row" ng-if="0===currentFolder.files.length">
+        <div class="col-xs-12">
+            No files
+        </div>
+    </div>
+</div>
+

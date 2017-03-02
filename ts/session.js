@@ -1,7 +1,6 @@
 /**
  * Created by local-rlong on 07/06/2016.
  */
-/// <reference path="../typings/index.d.ts" />
 var session;
 (function (session) {
     var Context = (function () {

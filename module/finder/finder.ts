@@ -11,7 +11,7 @@ module finder {
     import IRequestHandler = json_broker.IRequestHandler;
     import BrokerMessage = json_broker.BrokerMessage;
 
-    const SERVICE_NAME = "remote_gateway.AppleScriptService:com.apple.finder";
+    const SERVICE_NAME = "remote_gateway.AppleScriptService:finder";
 
     export interface IPathComponent {
         name: string;

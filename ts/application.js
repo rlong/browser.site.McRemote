@@ -1,8 +1,6 @@
 /**
  * Created by local-rlong on 07/06/2016.
  */
-/// <reference path="../typings/index.d.ts" />
-/// <reference path="../component/popup.ts" />
 var application;
 (function (application) {
     var Context = (function () {

@@ -45,7 +45,6 @@ mcRemote.component('templateUrllist', {
     controller: function ($scope, $stateParams) {
         console.log($scope);
         console.log($stateParams);
-        console.log($stateParams.path);
         this.path = $stateParams.path;
         this.greeting = 'cruel world';
         this.toggleGreeting = function () {

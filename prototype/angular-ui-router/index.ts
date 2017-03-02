@@ -64,7 +64,6 @@ mcRemote.component('templateUrllist', {
 
         console.log( $scope );
         console.log( $stateParams );
-        console.log( $stateParams.path );
         this.path = $stateParams.path;
 
         this.greeting = 'cruel world';

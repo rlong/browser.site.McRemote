@@ -3,10 +3,6 @@
  */
 
 
-/// <reference path="../typings/index.d.ts" />
-/// <reference path="../component/popup.ts" />
-
-
 
 namespace application {
 

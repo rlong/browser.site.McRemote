@@ -5,7 +5,7 @@
 var finder;
 (function (finder) {
     var BrokerMessage = json_broker.BrokerMessage;
-    var SERVICE_NAME = "remote_gateway.AppleScriptService:com.apple.finder";
+    var SERVICE_NAME = "remote_gateway.AppleScriptService:finder";
     var FolderItem = (function () {
         function FolderItem() {
         }
@@ -89,4 +89,4 @@ var finder;
     }());
     finder.Proxy = Proxy;
 })(finder || (finder = {}));
-//# sourceMappingURL=com.apple.finder.js.map
+//# sourceMappingURL=finder.js.map
