@@ -1,6 +1,7 @@
-/**
- * Created by rlong on 20/03/2016.
- */
+// Copyright (c) 2017 Richard Long
+//
+// Released under the MIT license ( http://opensource.org/licenses/MIT )
+//
 
 
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
@@ -9,7 +10,6 @@
 module clipboard {
 
     const SERVICE_NAME = "remote_gateway.AppleScriptService:clipboard";
-
 
 
     export class ClipBoardProxy {

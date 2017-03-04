@@ -20,6 +20,7 @@
     <script src="../../node_modules/angular/angular.js"></script>
     <script src="../../node_modules/angular-animate/angular-animate.js"></script>
     <script src="../../node_modules/angular-bootstrap-npm/dist/angular-bootstrap-tpls.min.js"></script>
+    <script src="../../js/angular-ui-router/angular-ui-router.js"></script>
 
     <!-- TS libs -->
     <script src="../../github/lib.json_broker/json_broker.js"></script>
@@ -29,6 +30,7 @@
 
 
     <script src="clipboard.js"></script>
+    <script src="ClipboardComponent.js"></script>
     <script src="index.js"></script>
 
 </head>
@@ -40,42 +42,12 @@
 #include <body-nav.navbar.html>
 -->
 
+<div class="container">
 
-<div class="container" ng-controller="index">
 
-
-    <br>
-
-    <div class="row">
-
-        <div class="col-xs-12">
-            <textarea class="form-control" rows="3" ng-model="viewController.clipboardAsText"></textarea>
-        </div>
-
-    </div>
-
-    <br>
-
-    <div class="row">
-        <div class="col-xs-12">
-            <button class="btn btn-default" ng-click="viewController.copyButtonOnClick()" style="width: 100%;">
-                Copy from remote clipboard
-            </button>
-        </div>
-    </div>
-
-    <br>
-
-    <div class="row">
-        <div class="col-xs-12">
-            <button class="btn btn-default" ng-click="viewController.pasteButtonOnClick()" style="width: 100%;">
-                Paste to remote clipboard
-            </button>
-        </div>
-    </div>
+    <clipboard-component hero="ctrl.hero"></clipboard-component>
 
 </div>
-
 
 
 </body>

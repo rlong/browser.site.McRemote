@@ -1,39 +1,9 @@
-/**
- */
-/// <reference path="../../github/lib.json_broker/json_broker.ts" />
+// Copyright (c) 2017 Richard Long
+//
+// Released under the MIT license ( http://opensource.org/licenses/MIT )
+//
 /// <reference path="../../ts/page.ts" />
-var ViewController = (function () {
-    function ViewController($http, $q) {
-        this.clipboardAsText = "";
-        var brokerAdapter = json_broker.buildBrokerAdapter($http, $q);
-        this.proxy = new clipboard.ClipBoardProxy(brokerAdapter);
-    }
-    ViewController.prototype.copyButtonOnClick = function () {
-        this.get_clipboard();
-    };
-    ViewController.prototype.get_clipboard = function () {
-        var self = this;
-        this.proxy.get_clipboard().then(function (promiseValue) {
-            console.log(promiseValue);
-            self.clipboardAsText = promiseValue;
-            // window.prompt("clipboard:", promiseValue);
-        }, function (reason) {
-            console.error(reason);
-        });
-    };
-    ViewController.prototype.pasteButtonOnClick = function () {
-        this.proxy.set_clipboard(this.clipboardAsText).then(function () {
-            console.log("entered");
-        }, function (reason) {
-            console.error(reason);
-        });
-    };
-    return ViewController;
-}());
+/// <reference path="ClipboardComponent.ts" />
 var mcRemote = page.buildAngularModule();
-mcRemote.controller('index', ["$http", "$q", "$scope",
-    function ($http, $q, $scope) {
-        $scope.viewController = new ViewController($http, $q);
-        $scope.viewController.get_clipboard();
-    }]);
+ClipboardComponent.setup(mcRemote);
 //# sourceMappingURL=index.js.map
