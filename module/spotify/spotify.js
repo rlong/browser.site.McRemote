@@ -30,20 +30,29 @@ var spotify;
         function Proxy(adapter) {
             this.adapter = adapter;
         }
+        ///////////////////////////////////////////////////////////////////////
+        // TEST
+        ///////////////////////////////////////////////////////////////////////
         Proxy.prototype.ping = function () {
             var request = BrokerMessage.buildRequestWithOrderedParameters(SERVICE_NAME, "get_all_enums");
             return this.adapter.dispatch(request).then(function (promiseValue) {
                 return;
             });
         };
-        Proxy.prototype.get_all_enums = function () {
-            var request = BrokerMessage.buildRequestWithOrderedParameters(SERVICE_NAME, "get_all_enums");
+        ///////////////////////////////////////////////////////////////////////
+        // META
+        ///////////////////////////////////////////////////////////////////////
+        Proxy.prototype.meta_get_all_enums = function () {
+            var request = BrokerMessage.buildRequestWithOrderedParameters(SERVICE_NAME, "meta_get_all_enums");
             return this.adapter.dispatch(request).then(function (promiseValue) {
                 console.info(promiseValue.orderedParameters[0]);
                 return promiseValue.orderedParameters[0];
             });
         };
-        Proxy.prototype.dispatch_playback_properties = function (methodName) {
+        ///////////////////////////////////////////////////////////////////////
+        // MEDIA
+        ///////////////////////////////////////////////////////////////////////
+        Proxy.prototype.dispatchMediaPropertiesRequest = function (methodName) {
             var request = BrokerMessage.buildRequestWithOrderedParameters(SERVICE_NAME, methodName);
             return this.adapter.dispatch(request).then(function (response) {
                 var playbackProperties = response.orderedParameters[0];
@@ -51,11 +60,11 @@ var spotify;
                 return playbackProperties;
             });
         };
-        Proxy.prototype.playback_properties = function () {
-            return this.dispatch_playback_properties("playback_properties");
+        Proxy.prototype.media_properties = function () {
+            return this.dispatchMediaPropertiesRequest("media_properties");
         };
-        Proxy.prototype.playback_play = function () {
-            return this.dispatch_playback_properties("playback_play");
+        Proxy.prototype.media_play = function () {
+            return this.dispatchMediaPropertiesRequest("media_play");
         };
         return Proxy;
     }());
@@ -64,20 +73,31 @@ var spotify;
         function Service(proxy) {
             this.proxy = proxy;
         }
-        Service.prototype.playback_properties = function () {
+        Service.prototype.media_properties = function () {
             var _this = this;
-            this.proxy.playback_properties().then(function (playbackProperties) {
-                if (null == _this.pendingplaybackChange) {
-                    _this.playbackProperties = playbackProperties;
-                }
+            var promise = this.proxy.media_properties();
+            promise.then(function (playbackProperties) {
+                _this.setPlaybackProperties(playbackProperties, promise);
             });
         };
-        Service.prototype.playback_play = function () {
+        Service.prototype.media_play = function () {
             var _this = this;
-            this.pendingplaybackChange = this.proxy.playback_play();
-            this.pendingplaybackChange.finally(function () {
-                _this.pendingplaybackChange = null;
+            var promise = this.proxy.media_play();
+            this.pendingMediaChange = promise;
+            promise.then(function (playbackProperties) {
+                _this.setPlaybackProperties(playbackProperties, promise);
             });
+        };
+        Service.prototype.setPlaybackProperties = function (playbackProperties, completedPromise) {
+            if (this.pendingMediaChange == null) {
+                this.mediaProperties = playbackProperties;
+                return;
+            }
+            if (this.pendingMediaChange === completedPromise) {
+                this.pendingMediaChange = null;
+                this.mediaProperties = playbackProperties;
+                return;
+            }
         };
         return Service;
     }());

@@ -1,6 +1,8 @@
-/**
- * Created by local-rlong on 01/03/2017.
- */
+// Copyright (c) 2017 Richard Long
+//
+// Released under the MIT license ( http://opensource.org/licenses/MIT )
+//
+
 
 
 

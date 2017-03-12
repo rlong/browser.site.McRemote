@@ -13,8 +13,6 @@ module spotify {
     import IRequestHandler = json_broker.IRequestHandler;
     import BrokerMessage = json_broker.BrokerMessage;
 
-
-
     enum PlayerState {
         unknown,
         paused,
@@ -44,7 +42,7 @@ module spotify {
         _shuffling: boolean;
     }
 
-    interface IPlaybackProperties {
+    interface IMediaProperties {
 
         has_current_track: boolean;
         _id: string;
@@ -55,7 +53,7 @@ module spotify {
     }
 
 
-    interface ITrackProperties {
+    interface ICurrentTrackProperties {
 
         has_current_track: boolean;
         _album: string;
@@ -83,6 +81,10 @@ module spotify {
             this.adapter = adapter;
         }
 
+        ///////////////////////////////////////////////////////////////////////
+        // TEST
+        ///////////////////////////////////////////////////////////////////////
+
         ping(): angular.IPromise<void> {
 
             let request = BrokerMessage.buildRequestWithOrderedParameters(SERVICE_NAME, "get_all_enums");
@@ -94,9 +96,13 @@ module spotify {
             );
         }
 
+        ///////////////////////////////////////////////////////////////////////
+        // META
+        ///////////////////////////////////////////////////////////////////////
 
-        get_all_enums(): angular.IPromise<any> {
-            let request = BrokerMessage.buildRequestWithOrderedParameters(SERVICE_NAME, "get_all_enums");
+        meta_get_all_enums(): angular.IPromise<any> {
+
+            let request = BrokerMessage.buildRequestWithOrderedParameters(SERVICE_NAME, "meta_get_all_enums");
             return this.adapter.dispatch(request).then(
                 (promiseValue: BrokerMessage) => {
 
@@ -106,7 +112,14 @@ module spotify {
             );
         }
 
-        private dispatch_playback_properties( methodName: string ): angular.IPromise<IPlaybackProperties> {
+
+
+        ///////////////////////////////////////////////////////////////////////
+        // MEDIA
+        ///////////////////////////////////////////////////////////////////////
+
+
+        private dispatchMediaPropertiesRequest( methodName: string ): angular.IPromise<IMediaProperties> {
 
             let request = BrokerMessage.buildRequestWithOrderedParameters(SERVICE_NAME, methodName );
             return this.adapter.dispatch(request).then(
@@ -114,19 +127,19 @@ module spotify {
 
                     var playbackProperties = response.orderedParameters[0];
                     playbackProperties.player_state = lookupPlayerState( playbackProperties.player_state );
-                    return playbackProperties as IPlaybackProperties;
+                    return playbackProperties as IMediaProperties;
                 }
             );
         }
 
-        playback_properties(): angular.IPromise<IPlaybackProperties> {
+        media_properties(): angular.IPromise<IMediaProperties> {
 
-            return this.dispatch_playback_properties( "playback_properties" );
+            return this.dispatchMediaPropertiesRequest( "media_properties" );
         }
 
-        playback_play(): angular.IPromise<IPlaybackProperties> {
+        media_play(): angular.IPromise<IMediaProperties> {
 
-            return this.dispatch_playback_properties( "playback_play" );
+            return this.dispatchMediaPropertiesRequest( "media_play" );
         }
 
     }
@@ -136,34 +149,53 @@ module spotify {
         proxy: Proxy;
 
         applicationProperties: IApplicationProperties;
+        pendingApplicationChange: angular.IPromise<IApplicationProperties>;
 
-        playbackProperties: IPlaybackProperties;
-        pendingplaybackChange: angular.IPromise<IPlaybackProperties>;
+        mediaProperties: IMediaProperties;
+        pendingMediaChange: angular.IPromise<IMediaProperties>;
 
-        trackProperties: ITrackProperties;
+        trackProperties: ICurrentTrackProperties;
 
         constructor(proxy: Proxy) {
 
             this.proxy = proxy;
         }
 
-        playback_properties() {
+        media_properties() {
 
-            this.proxy.playback_properties().then(
-                (playbackProperties: IPlaybackProperties) => {
-                    if( null == this.pendingplaybackChange ) {
-                        this.playbackProperties = playbackProperties;
-                    }
+            let promise = this.proxy.media_properties();
+            promise.then(
+                (playbackProperties: IMediaProperties) => {
+                    this.setPlaybackProperties( playbackProperties, promise );
                 }
             )
         }
 
-        playback_play() {
+        media_play() {
 
-            this.pendingplaybackChange = this.proxy.playback_play();
-            this.pendingplaybackChange.finally( () => {
-                this.pendingplaybackChange = null;
-            });
+            let promise = this.proxy.media_play();
+            this.pendingMediaChange = promise;
+
+            promise.then(
+                (playbackProperties: IMediaProperties) => {
+                    this.setPlaybackProperties( playbackProperties, promise );
+                }
+            );
+
+        }
+
+        private setPlaybackProperties(playbackProperties: IMediaProperties, completedPromise: angular.IPromise<IMediaProperties> ) {
+
+            if( this.pendingMediaChange == null ) {
+                this.mediaProperties = playbackProperties;
+                return;
+            }
+
+            if( this.pendingMediaChange === completedPromise ) {
+                this.pendingMediaChange = null;
+                this.mediaProperties = playbackProperties;
+                return;
+            }
         }
     }
 }

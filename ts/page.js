@@ -20,3 +20,4 @@ var page;
     }
     page.setup = setup;
 })(page || (page = {}));
+//# sourceMappingURL=page.js.map

@@ -33,7 +33,7 @@ var component;
                     },
                     body: function () {
                         return body;
-                    },
+                    }
                 }
             });
         }
@@ -59,3 +59,4 @@ var component;
         popup.setup = setup;
     })(popup = component.popup || (component.popup = {}));
 })(component || (component = {}));
+//# sourceMappingURL=popup.js.map

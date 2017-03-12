@@ -8,10 +8,10 @@ var ViewController = (function () {
     function ViewController(spotify) {
         this.variable = "hey hey (from angular)";
         this.spotify = spotify;
-        spotify.proxy.get_all_enums();
+        spotify.proxy.meta_get_all_enums();
     }
     ViewController.prototype.playButtonOnClick = function () {
-        this.spotify.playback_play();
+        this.spotify.media_play();
     };
     return ViewController;
 }());

@@ -13,14 +13,13 @@ class ViewController {
 
     spotify: spotify.Service;
 
-
     constructor( spotify: spotify.Service ) {
         this.spotify = spotify;
-        spotify.proxy.get_all_enums();
+        spotify.proxy.meta_get_all_enums();
     }
 
     playButtonOnClick() {
-        this.spotify.playback_play();
+        this.spotify.media_play();
     }
 
 }
