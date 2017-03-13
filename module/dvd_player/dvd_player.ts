@@ -225,29 +225,96 @@ module dvd_player {
 
     }
 
-    export class MediaService {
+    export class ApplicationService {
+
+        applicationPropertues: IApplicationProperties;
+        pendingApplicationProperties: angular.IPromise<IApplicationProperties>;
 
         proxy: Proxy;
-
-        mediaProperties: IMediaProperties;
-        pendingMediaProperties: angular.IPromise<IMediaProperties>;
-
 
         constructor( proxy: Proxy ) {
             this.proxy = proxy;
         }
 
-        media_properties() {
+        public application_properties(): angular.IPromise<IApplicationProperties> {
 
-            this.processMediaPropertiesPromise( this.proxy.media_properties() );
+            return this.processApplicationPropertiesPromise( this.proxy.application_properties() );
         }
 
-        media_play() {
-
-            this.processMediaPropertiesPromise( this.proxy.media_play() );
+        public application_eject_dvd() {
+            return this.processApplicationPropertiesPromise( this.proxy.application_eject_dvd() );
         }
 
-        private processMediaPropertiesPromise( pendingMediaProperties: angular.IPromise<IMediaProperties> ) {
+        public application_set_volume( audio_volume: number ) {
+            return this.processApplicationPropertiesPromise(
+                this.proxy.application_set_volume( audio_volume ) );
+        }
+
+        private processApplicationPropertiesPromise( pendingApplicationProperties: angular.IPromise<IApplicationProperties>)
+        :angular.IPromise<IApplicationProperties> {
+
+            this.pendingApplicationProperties = pendingApplicationProperties;
+
+            pendingApplicationProperties.then(
+                ( applicationProperties: IApplicationProperties ) => {
+
+                    if( this.pendingApplicationProperties == pendingApplicationProperties ) {
+                        this.applicationPropertues = applicationProperties;
+                        this.pendingApplicationProperties = null;
+                    } else {
+                        // throw it on the ground
+                    }
+                },
+                (reason) => {
+
+                    console.warn( reason );
+                    if( this.pendingApplicationProperties == pendingApplicationProperties ) {
+                        this.pendingApplicationProperties = null;
+                    }
+                }
+            );
+            return pendingApplicationProperties;
+        }
+
+
+        public hasPendingApplicationProperties(): boolean {
+
+            if( null == this.pendingApplicationProperties ) {
+                return false;
+            }
+            return true;
+        }
+
+
+    }
+
+    export class MediaService {
+
+
+        mediaProperties: IMediaProperties;
+        pendingMediaProperties: angular.IPromise<IMediaProperties>;
+        proxy: Proxy;
+
+        constructor( proxy: Proxy ) {
+            this.proxy = proxy;
+        }
+
+        media_properties():angular.IPromise<IMediaProperties> {
+
+            return this.processMediaPropertiesPromise( this.proxy.media_properties() );
+        }
+
+        media_play():angular.IPromise<IMediaProperties> {
+
+            return this.processMediaPropertiesPromise( this.proxy.media_play() );
+        }
+
+        media_playpause() {
+            return this.processMediaPropertiesPromise( this.proxy.media_playpause() );
+        }
+
+        private processMediaPropertiesPromise( pendingMediaProperties: angular.IPromise<IMediaProperties> )
+        :angular.IPromise<IMediaProperties> {
 
             this.pendingMediaProperties = pendingMediaProperties;
 
@@ -268,15 +335,61 @@ module dvd_player {
                     }
                 }
             );
+
+            return pendingMediaProperties;
         }
 
-        public hasPendingMediaProperties() {
+        public hasPendingMediaProperties(): boolean {
 
             if( null == this.pendingMediaProperties ) {
                 return false;
             }
             return true;
         }
-
     }
+
+    export class MediaStatePoller {
+
+        $interval: angular.IIntervalService;
+        mediaService: dvd_player.MediaService;
+
+        pollingInterval = null;
+
+        constructor($interval: angular.IIntervalService,
+                    mediaService: dvd_player.MediaService ) {
+
+            this.$interval = $interval;
+            this.mediaService= mediaService;
+        }
+
+        startPolling() {
+
+            if( null != this.pollingInterval ) {
+                console.warn( "null != this.pollingInterval" );
+                return;
+            }
+
+            this.pollingInterval = this.$interval( () => {
+
+                if( this.mediaService.hasPendingMediaProperties() ) {
+                    return;
+                }
+
+                this.mediaService.media_properties();
+
+            }, 1000);
+        }
+
+        stopPolling() {
+
+            if( null == this.pollingInterval ) {
+                console.warn( "null == this.pollingInterval" );
+                return;
+            }
+
+            this.$interval.cancel( this.pollingInterval );
+            this.pollingInterval = null;
+        }
+    }
+
 }

@@ -13,192 +13,30 @@
 
 
 
-export class MediaPropertiesPoller {
 
-    $interval: angular.IIntervalService;
-    $q: angular.IQService = null;
-    service: dvd_player.Service;
-
-    pendingProperties: angular.IPromise<dvd_player.IMediaProperties> = null;
-    pollingInterval = null;
-
-    constructor($interval: angular.IIntervalService, $q: angular.IQService, service: dvd_player.Service) {
-
-        this.$interval = $interval;
-        this.$q = $q;
-        this.service = service;
-    }
-
-    pollingStart() {
-
-        if( null != this.pollingInterval ) {
-            console.warn( "null != this.pollingInterval" );
-            return;
-        }
-
-        this.pollingInterval = this.$interval( () => {
+export class ViewController {
 
 
-            if( this.service.hasPendingMediaChange() ) {
-                return;
-            }
-
-            if( this.applicationState.has_media ) {
-
-                console.log( "poll 'media_state'" );
-
-                // still waiting on a polled media state response
-                if( null != this.pollingMediaState ) {
-                    console.warn( "null != this.pollingMediaState" );
-                    return;
-                }
-
-                this.pollingMediaState = this.proxy.media_state();
-                this.pollingMediaState.then(
-                    (result: dvd_player.MediaState) => {
-
-                        this.pollingMediaState = null;
-                        if( !result.has_media ) {
-                            this.applicationState.has_media = false;
-                        }
-                    },
-                    (reason) => {
-                        console.error( "erhmerhgerd" );
-                        this.pollingMediaState = null;
-                    }
-                );
-
-            } else {
-
-                console.log( "poll 'application_state'" );
-
-                // still waiting on a polled media state response
-                if( null != this.pollingApplicationState ) {
-                    console.warn( "null != this.pollingApplicationState" );
-                    return;
-                }
-
-                this.pollingApplicationState = this.application_state();
-
-                this.pollingApplicationState.then(
-                    () => {
-                        this.pollingApplicationState = null;
-                    },
-                    (reason) => {
-                        console.error( "erhmerhgerd" );
-                        this.pollingApplicationState = null;
-                    }
-                );
-            }
-
-        }, 1000);
-
-
-    }
-}
-
-export class Model {
-
-
-    startPollingStatus() {
-
-
-        this.pollingInterval = this.$interval( () => {
-
-            if( null == this.applicationState ) {
-                console.warn( "null == this.applicationState" );
-                return;
-            }
-
-            if( this.applicationState.has_media ) {
-
-                console.log( "poll 'media_state'" );
-
-                // still waiting on a polled media state response
-                if( null != this.pollingMediaState ) {
-                    console.warn( "null != this.pollingMediaState" );
-                    return;
-                }
-
-                this.pollingMediaState = this.proxy.media_state();
-                this.pollingMediaState.then(
-                    (result: dvd_player.MediaState) => {
-
-                        this.pollingMediaState = null;
-                        if( !result.has_media ) {
-                            this.applicationState.has_media = false;
-                        }
-                    },
-                    (reason) => {
-                        console.error( "erhmerhgerd" );
-                        this.pollingMediaState = null;
-                    }
-                );
-
-            } else {
-
-                console.log( "poll 'application_state'" );
-
-                // still waiting on a polled media state response
-                if( null != this.pollingApplicationState ) {
-                    console.warn( "null != this.pollingApplicationState" );
-                    return;
-                }
-
-                this.pollingApplicationState = this.application_state();
-
-                this.pollingApplicationState.then(
-                    () => {
-                        this.pollingApplicationState = null;
-                    },
-                    (reason) => {
-                        console.error( "erhmerhgerd" );
-                        this.pollingApplicationState = null;
-                    }
-                );
-            }
-
-        }, 1000);
-
-    }
-
-    stopPollingStatus() {
-
-        if( null == this.pollingInterval ) {
-            console.warn( "null == this.pollingInterval" );
-            return;
-        }
-
-        this.$interval.cancel( this.pollingInterval );
-        this.pollingInterval = null;
-    }
-
-}
-
-export class ViewController implements IStateListener {
-
-    $interval: angular.IIntervalService;
-
-    applicationState: dvd_player.ApplicationState = null;
-    mediaState: dvd_player.MediaState = null;
     proxy: dvd_player.Proxy = null;
-    model: Model = null;
+    applicationService: dvd_player.ApplicationService;
+    mediaService: dvd_player.MediaService;
+    mediaStatePoller: dvd_player.MediaStatePoller;
+
     audioVolumeSliderConfig: any = {};
     elapsedTimeSliderConfig: any = null;
 
 
+    constructor( $http: angular.IHttpService, $interval: angular.IIntervalService,
+                 $q: angular.IQService ) {
 
-    constructor( $http: angular.IHttpService,
-                 $q: angular.IQService, model: Model ) {
-
-        this.model = model;
-        this.model.stateListener = this;
-
-        let adapter = json_broker.angular1.buildBrokerAdapter( $http, $q );
+        let adapter = json_broker.buildBrokerAdapter( $http, $q );
         this.proxy = new dvd_player.Proxy(adapter);
 
+        this.applicationService = new dvd_player.ApplicationService( this.proxy );
+        this.mediaService = new dvd_player.MediaService( this.proxy );
+        this.mediaStatePoller = new dvd_player.MediaStatePoller( $interval, this.mediaService );
 
-        this.proxy.get_all_enums().then(
+        this.proxy.meta_get_all_enums().then(
             (result: json_broker.BrokerMessage) => {
                 console.log( result );
             }
@@ -215,49 +53,27 @@ export class ViewController implements IStateListener {
             }
         };
 
-        this.getApplicationState();
-        this.getMediaState();
-
-        this.model.startPollingStatus();
-
-    }
-
-
-    applicationStateOnUpdate( applicationState: dvd_player.ApplicationState ) {
-
-        console.log( "applicationStateOnPolled" );
-
-    }
-
-    mediaStateOnUpdate( mediaState: dvd_player.MediaState ) {
-
-        console.log( "applicationStateOnPolled" );
+        this.mediaStatePoller.startPolling();
     }
 
 
     ejectOnClick() {
 
         console.log( "ejectOnClick" );
-        this.model.eject_dvd();
+        this.applicationService.application_eject_dvd();
     }
 
     playPauseOnClick() {
-        this.model.play_pause_dvd();
+
+        this.mediaService.media_playpause();
     }
 
-    getApplicationState() {
-        this.model.application_state().then(
-            () => {},
-            (reason) => {
-                console.error( reason);
-            }
-        );
-    }
 
     getMediaState() {
-        this.model.media_state().then(
 
-            (result: dvd_player.MediaState)=> {
+        this.mediaService.media_properties().then(
+
+            (result: dvd_player.IMediaProperties)=> {
 
                 console.log( "got media state" );
 
@@ -283,7 +99,7 @@ export class ViewController implements IStateListener {
     audioVolumeOnChange( updatedVolume: number ) {
 
         console.log( "updatedVolume: " + updatedVolume);
-        this.model.set_audio_volume( Math.round( updatedVolume ));
+        this.applicationService.application_set_volume( updatedVolume );
     }
 
 }
@@ -294,24 +110,12 @@ var mcRemote= page.buildAngularModule();
 mcRemote.controller('index',
     function ($http: angular.IHttpService, $q: angular.IQService,
               $interval: angular.IIntervalService, $scope,
-              $uibModal, model: Model) {
+              $uibModal ) {
 
-        $scope.model = model;
-
-
-        let brokerAdapter = json_broker.buildBrokerAdapter( $http, $q );
-        let proxy = new dvd_player.Proxy(brokerAdapter);
-
-        $scope.viewController = new ViewController( $http, $q, model );
+        $scope.viewController = new ViewController( $http, $interval, $q );
 
 });
 
-mcRemote.factory( "model", ["$http", "$interval", "$q", "$window", function($http,$interval:angular.IIntervalService,$q,$window) {
-
-    let answer = new Model( $http, $interval, $q );
-    return answer;
-
-}]);
 
 
 // angular1_nouislider.setup( mcRemote );

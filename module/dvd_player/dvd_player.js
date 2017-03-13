@@ -147,15 +147,58 @@ var dvd_player;
         return Proxy;
     }());
     dvd_player.Proxy = Proxy;
+    var ApplicationService = (function () {
+        function ApplicationService(proxy) {
+            this.proxy = proxy;
+        }
+        ApplicationService.prototype.application_properties = function () {
+            return this.processApplicationPropertiesPromise(this.proxy.application_properties());
+        };
+        ApplicationService.prototype.application_eject_dvd = function () {
+            return this.processApplicationPropertiesPromise(this.proxy.application_eject_dvd());
+        };
+        ApplicationService.prototype.application_set_volume = function (audio_volume) {
+            return this.processApplicationPropertiesPromise(this.proxy.application_set_volume(audio_volume));
+        };
+        ApplicationService.prototype.processApplicationPropertiesPromise = function (pendingApplicationProperties) {
+            var _this = this;
+            this.pendingApplicationProperties = pendingApplicationProperties;
+            pendingApplicationProperties.then(function (applicationProperties) {
+                if (_this.pendingApplicationProperties == pendingApplicationProperties) {
+                    _this.applicationPropertues = applicationProperties;
+                    _this.pendingApplicationProperties = null;
+                }
+                else {
+                }
+            }, function (reason) {
+                console.warn(reason);
+                if (_this.pendingApplicationProperties == pendingApplicationProperties) {
+                    _this.pendingApplicationProperties = null;
+                }
+            });
+            return pendingApplicationProperties;
+        };
+        ApplicationService.prototype.hasPendingApplicationProperties = function () {
+            if (null == this.pendingApplicationProperties) {
+                return false;
+            }
+            return true;
+        };
+        return ApplicationService;
+    }());
+    dvd_player.ApplicationService = ApplicationService;
     var MediaService = (function () {
         function MediaService(proxy) {
             this.proxy = proxy;
         }
         MediaService.prototype.media_properties = function () {
-            this.processMediaPropertiesPromise(this.proxy.media_properties());
+            return this.processMediaPropertiesPromise(this.proxy.media_properties());
         };
         MediaService.prototype.media_play = function () {
-            this.processMediaPropertiesPromise(this.proxy.media_play());
+            return this.processMediaPropertiesPromise(this.proxy.media_play());
+        };
+        MediaService.prototype.media_playpause = function () {
+            return this.processMediaPropertiesPromise(this.proxy.media_playpause());
         };
         MediaService.prototype.processMediaPropertiesPromise = function (pendingMediaProperties) {
             var _this = this;
@@ -173,6 +216,7 @@ var dvd_player;
                     _this.pendingMediaProperties = null;
                 }
             });
+            return pendingMediaProperties;
         };
         MediaService.prototype.hasPendingMediaProperties = function () {
             if (null == this.pendingMediaProperties) {
@@ -183,5 +227,35 @@ var dvd_player;
         return MediaService;
     }());
     dvd_player.MediaService = MediaService;
+    var MediaStatePoller = (function () {
+        function MediaStatePoller($interval, mediaService) {
+            this.pollingInterval = null;
+            this.$interval = $interval;
+            this.mediaService = mediaService;
+        }
+        MediaStatePoller.prototype.startPolling = function () {
+            var _this = this;
+            if (null != this.pollingInterval) {
+                console.warn("null != this.pollingInterval");
+                return;
+            }
+            this.pollingInterval = this.$interval(function () {
+                if (_this.mediaService.hasPendingMediaProperties()) {
+                    return;
+                }
+                _this.mediaService.media_properties();
+            }, 1000);
+        };
+        MediaStatePoller.prototype.stopPolling = function () {
+            if (null == this.pollingInterval) {
+                console.warn("null == this.pollingInterval");
+                return;
+            }
+            this.$interval.cancel(this.pollingInterval);
+            this.pollingInterval = null;
+        };
+        return MediaStatePoller;
+    }());
+    dvd_player.MediaStatePoller = MediaStatePoller;
 })(dvd_player || (dvd_player = {}));
 //# sourceMappingURL=dvd_player.js.map
