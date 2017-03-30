@@ -12,3 +12,13 @@ mcRemote.controller('index', ["$scope", function ($scope) {
 
 }]);
 
+
+
+// vvv http://stackoverflow.com/questions/31840800/angularjs-and-requirejs-module-not-available
+
+let ngApp = document.getElementsByClassName( "ng-app" );
+if( ngApp.length > 0 ) {
+    angular.bootstrap(ngApp[0], ["McRemote"]);
+}
+
+// ^^^ http://stackoverflow.com/questions/31840800/angularjs-and-requirejs-module-not-available

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "../../node_modules/angular/angular"
+  },
+  {
+    "name": "../../node_modules/angular-animate/angular-animate"
+  },
+  {
+    "name": "../../node_modules/angular-bootstrap-npm/dist/angular-bootstrap-tpls.min"
+  },
+  {
+    "name": "../../js/angular-ui-router/angular-ui-router"
+  },
+  {
+    "name": "../../ts/application"
+  },
+  {
+    "name": "../../ts/session"
+  },
+  {
+    "name": "../../ts/page"
+  },
+  {
+    "name":"./index"
+  }
+]
