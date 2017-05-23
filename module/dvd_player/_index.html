@@ -20,15 +20,23 @@
     <script src="../../node_modules/angular/angular.js"></script>
     <script src="../../node_modules/angular-animate/angular-animate.js"></script>
     <script src="../../node_modules/angular-bootstrap-npm/dist/angular-bootstrap-tpls.min.js"></script>
+    <script src="../../node_modules/nouislider/distribute/nouislider.min.js"></script>
     <script src="../../js/angular-ui-router/angular-ui-router.js"></script>
 
     <!-- TS libs -->
+    <script src="../../component/popup.js"></script>
     <script src="../../github/lib.json_broker/json_broker.js"></script>
+    <script src="../../github/angular1_nouislider/angular1_nouislider.js"></script>
+
     <script src="../../ts/application.js"></script>
-    <script src="../../ts/session.js"></script>
     <script src="../../ts/page.js"></script>
+    <script src="../../ts/media.js"></script>
+    <script src="../../ts/session.js"></script>
 
     <script src="dvd_player.js"></script>
+    <script src="ApplicationComponent.js"></script>
+    <script src="MediaComponent.js"></script>
+    <script src="TestComponent.js"></script>
     <script src="index.js"></script>
 
 </head>
@@ -42,41 +50,12 @@
 <div class="container" ng-controller="index">
 
 
-    <div nouislider ng-model="model.applicationState.audio_volume" no-ui-slider-config="viewController.audioVolumeSliderConfig"
-         ng-change="viewController.audioVolumeOnChange(model.applicationState.audio_volume)">
-    </div>
 
-    <h2>ApplicationState</h2>
-    <table>
-        <tr>
-            <td>model.applicationState.app_initializing</td>
-            <td>{{model.applicationState.app_initializing}}</td>
-        </tr>
-        <tr>
-            <td>model.applicationState.audio_volume</td>
-            <td>{{model.applicationState.audio_volume}}</td>
-        </tr>
-        <tr>
-            <td>model.applicationState.closed_captioning</td>
-            <td>{{model.applicationState.closed_captioning}}</td>
-        </tr>
-        <tr>
-            <td>model.applicationState.displaying_subtitle</td>
-            <td>{{model.applicationState.displaying_subtitle}}</td>
-        </tr>
-        <tr>
-            <td>model.applicationState.dvd_scan_rate</td>
-            <td>{{model.applicationState.dvd_scan_rate}}</td>
-        </tr>
-        <tr>
-            <td>model.applicationState.has_media</td>
-            <td>{{model.applicationState.has_media}}</td>
-        </tr>
-        <tr>
-            <td>model.applicationState.viewer_full_screen</td>
-            <td>{{model.applicationState.viewer_full_screen}}</td>
-        </tr>
-    </table>
+    <application-component></application-component>
+    <hr>
+
+    <media-component></media-component>
+
 
     <div ng-if="model.applicationState.has_media">
 
@@ -140,8 +119,10 @@
 
         <hr>
 
-
     </div>
+
+    <hr>
+    <test-component></test-component>
 
 
 </div>

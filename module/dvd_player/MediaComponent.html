@@ -1,10 +1,153 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+
+<div class="well well-sm">
+
+    <h4>Volume</h4>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div nouislider
+                 ng-model="$ctrl.mediaService.mediaProperties.audio_volume"
+                 no-ui-slider-config="$ctrl.audioVolumeSliderConfig"
+                 ng-change="$ctrl.audioVolumeOnChange($ctrl.mediaService.mediaProperties.audio_volume)">
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+        <div class="col-xs-3">
+            <button class="btn btn-default" ng-click="$ctrl.audioVolumeAdjust(-10)" style="width: 100%;">
+                - 10%
+            </button>
+        </div>
+        <div class="col-xs-3">
+            <button class="btn btn-default" ng-click="$ctrl.audioVolumeAdjust(-1)" style="width: 100%;">
+                - 1%
+            </button>
+        </div>
+        <div class="col-xs-3">
+            <button class="btn btn-default" ng-click="$ctrl.audioVolumeAdjust(1)" style="width: 100%;">
+                + 1%
+            </button>
+        </div>
+        <div class="col-xs-3">
+            <button class="btn btn-default" ng-click="$ctrl.audioVolumeAdjust(10)" style="width: 100%;">
+                + 10%
+            </button>
+        </div>
+    </div>
+
+
+</div>
+
+
+<br>
+
+
+
+<fieldset ng-disabled="!$ctrl.mediaService.mediaProperties.has_media">
+
+    <div class="well well-sm">
+
+        <div ng-if="$ctrl.mediaService.mediaProperties.has_media">
+            {{$ctrl.mediaService.mediaProperties.elapsed_time | time}} /
+            {{$ctrl.mediaService.mediaProperties.title_length | time}}
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div nouislider
+                         ng-model="$ctrl.mediaService.mediaProperties.elapsed_time"
+                         no-ui-slider-config="$ctrl.elapsedTimeSliderConfig"
+                         ng-max="$ctrl.mediaService.mediaProperties.title_length"
+                         ng-change="$ctrl.elapsedTimeOnChange($ctrl.mediaService.mediaProperties.elapsed_time)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="!$ctrl.mediaService.mediaProperties.has_media">
+            --:-- /
+            --:--
+
+            <div class="row">
+                <div class="col-xs-12">
+                    NO MEDIA!
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="row">
+            <div class="col-xs-12">
+                <br>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6">
+                <button class="btn btn-default" ng-click="$ctrl.elapsedTimeAdjust(-300)" style="width: 100%;">
+                    - 5:00
+                </button>
+            </div>
+            <div class="col-xs-6">
+                <button class="btn btn-default" ng-click="$ctrl.elapsedTimeAdjust(300)" style="width: 100%;">
+                    + 5:00
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <br>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6">
+                <button class="btn btn-default" ng-click="$ctrl.elapsedTimeAdjust(-30)" style="width: 100%;">
+                    - 0:30
+                </button>
+            </div>
+            <div class="col-xs-6">
+                <button class="btn btn-default" ng-click="$ctrl.elapsedTimeAdjust(30)" style="width: 100%;">
+                    + 0:30
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <br>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6">
+                <button class="btn btn-default" ng-click="$ctrl.elapsedTimeAdjust(-5)" style="width: 100%;">
+                    - 0:05
+                </button>
+            </div>
+            <div class="col-xs-6">
+                <button class="btn btn-default" ng-click="$ctrl.elapsedTimeAdjust(5)" style="width: 100%;">
+                    + 0:05
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-xs-12">
+            <button class="btn btn-default" ng-click="$ctrl.playPauseOnClick()" style="width: 100%;">
+                Play / Pause
+            </button>
+        </div>
+
+    </div>
+
+</fieldset>
+

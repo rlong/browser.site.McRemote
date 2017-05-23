@@ -2,10 +2,10 @@
 //
 // Released under the MIT license ( http://opensource.org/licenses/MIT )
 //
-"use strict";
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
 /// <reference path="../../github/angular1_nouislider/angular1_nouislider.ts" />
 /// <reference path="../../ts/application.ts" />
+/// <reference path="../../ts/media.ts" />
 /// <reference path="../../ts/page.ts" />
 /// <reference path="../../ts/session.ts" />
 /// <reference path="../../component/popup.ts" />
@@ -32,7 +32,9 @@ var ViewController = (function () {
                 'max': 255
             }
         };
-        this.mediaStatePoller.startPolling();
+        if (2 != 1 + 1) {
+            this.applicationService.application_activate();
+        }
     }
     ViewController.prototype.ejectOnClick = function () {
         console.log("ejectOnClick");
@@ -65,13 +67,19 @@ var ViewController = (function () {
     };
     return ViewController;
 }());
-exports.ViewController = ViewController;
 var mcRemote = page.buildAngularModule();
-mcRemote.controller('index', function ($http, $q, $interval, $scope, $uibModal) {
-    $scope.viewController = new ViewController($http, $interval, $q);
-});
-// angular1_nouislider.setup( mcRemote );
 application.setup(mcRemote);
 session.setup(mcRemote);
 page.setup(mcRemote);
+media.setup(mcRemote);
+angular1_nouislider.setup(mcRemote);
+dvd_player.ApplicationService.setup(mcRemote);
+dvd_player.MediaService.setup(mcRemote);
+ApplicationComponent.setup(mcRemote);
+MediaComponent.setup(mcRemote);
+TestComponent.setup(mcRemote);
+mcRemote.controller('index', ["$http", "$q", "$interval", "$scope", "$uibModal",
+    function ($http, $q, $interval, $scope, $uibModal) {
+        $scope.viewController = new ViewController($http, $interval, $q);
+    }]);
 //# sourceMappingURL=index.js.map

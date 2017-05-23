@@ -6,15 +6,14 @@
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
 /// <reference path="../../github/angular1_nouislider/angular1_nouislider.ts" />
 /// <reference path="../../ts/application.ts" />
+/// <reference path="../../ts/media.ts" />
 /// <reference path="../../ts/page.ts" />
 /// <reference path="../../ts/session.ts" />
 /// <reference path="../../component/popup.ts" />
 
 
 
-
-
-export class ViewController {
+class ViewController {
 
 
     proxy: dvd_player.Proxy = null;
@@ -53,7 +52,9 @@ export class ViewController {
             }
         };
 
-        this.mediaStatePoller.startPolling();
+        if( 2 != 1+1 ) {
+            this.applicationService.application_activate();
+        }
     }
 
 
@@ -107,19 +108,30 @@ export class ViewController {
 
 var mcRemote= page.buildAngularModule();
 
+application.setup( mcRemote );
+session.setup( mcRemote );
+page.setup( mcRemote );
+media.setup( mcRemote );
+
+angular1_nouislider.setup( mcRemote );
+
+dvd_player.ApplicationService.setup( mcRemote );
+dvd_player.MediaService.setup( mcRemote );
+ApplicationComponent.setup( mcRemote );
+MediaComponent.setup( mcRemote );
+TestComponent.setup( mcRemote );
+
+
 mcRemote.controller('index',
-    function ($http: angular.IHttpService, $q: angular.IQService,
+    ["$http", "$q", "$interval", "$scope", "$uibModal",
+        function ( $http: angular.IHttpService, $q: angular.IQService,
               $interval: angular.IIntervalService, $scope,
               $uibModal ) {
 
         $scope.viewController = new ViewController( $http, $interval, $q );
+    }]
+);
 
-});
 
 
-
-// angular1_nouislider.setup( mcRemote );
-application.setup( mcRemote );
-session.setup( mcRemote );
-page.setup( mcRemote );
 

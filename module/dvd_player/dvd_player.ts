@@ -13,15 +13,15 @@
 
 module dvd_player {
 
-    const SERVICE_NAME = "remote_gateway.AppleScriptService:com.apple.DVDPlayer";
-    const VOLUME_MAX: number = 255;
+    const SERVICE_NAME = "remote_gateway.AppleScriptService:dvd_player";
+    export const VOLUME_MAX: number = 255;
     const VOLUME_MIN: number = 0;
 
     import IRequestHandler = json_broker.IRequestHandler;
     import BrokerMessage = json_broker.BrokerMessage;
 
     // x2/‌x4/‌x8/‌x16/‌x32
-    enum ScanRate {
+    export enum ScanRate {
         unknown,
         x2 = 2,
         x4 = 4,
@@ -50,7 +50,7 @@ module dvd_player {
     }
 
 
-    enum State {
+    export enum State {
         unknown,
         playing,
         playing_still,
@@ -94,6 +94,7 @@ module dvd_player {
 
     export interface IMediaProperties {
 
+        audio_volume: number;
         available_chapters: number;
         current_chapter: number;
         dvd_menu_active: boolean;
@@ -101,6 +102,7 @@ module dvd_player {
         elapsed_time: number;
         has_media: boolean;
         title_length: number;
+        remaing_time: number;
     }
 
     export class Proxy {
@@ -155,6 +157,7 @@ module dvd_player {
             return this.adapter.dispatch( request ).then(
                 (promiseValue:BrokerMessage) => {
 
+
                     let answer = promiseValue.orderedParameters[0];
 
                     let dvd_scan_rate = lookupScanRate( answer.dvd_scan_rate );
@@ -183,7 +186,7 @@ module dvd_player {
         }
 
         application_set_volume( audio_volume: number ): angular.IPromise<IApplicationProperties> {
-            return this.dispatchApplicationPropertiesRequest( "set_audio_volume", audio_volume );
+            return this.dispatchApplicationPropertiesRequest( "application_set_volume", audio_volume );
         }
 
 
@@ -199,11 +202,14 @@ module dvd_player {
             return this.adapter.dispatch( request ).then(
                 (promiseValue:BrokerMessage) => {
 
-                    let answer = promiseValue.orderedParameters[0];
+                    let mediaProperties = promiseValue.orderedParameters[0];
 
-                    let dvd_state = lookupState( answer.dvd_state );
-                    answer.dvd_state = dvd_state;
-                    return answer as IMediaProperties;
+                    mediaProperties.dvd_state = lookupState( mediaProperties.dvd_state );
+                    let answer = mediaProperties as IMediaProperties;
+                    if( answer.has_media ) {
+                        answer.remaing_time = answer.title_length - answer.elapsed_time;
+                    }
+                    return answer;
                 }
             );
         }
@@ -223,17 +229,30 @@ module dvd_player {
             return this.dispatchMediaPropertiesRequest( "media_playpause" );
         }
 
+
+        media_set_elapsed_time( elapsed_time: number ): angular.IPromise<IMediaProperties> {
+            return this.dispatchMediaPropertiesRequest( "media_set_elapsed_time", elapsed_time );
+        }
+
+        media_set_volume( audio_volume: number ): angular.IPromise<IMediaProperties> {
+            return this.dispatchMediaPropertiesRequest( "media_set_volume", audio_volume );
+        }
+
     }
 
     export class ApplicationService {
 
-        applicationPropertues: IApplicationProperties;
+        applicationProperties: IApplicationProperties;
         pendingApplicationProperties: angular.IPromise<IApplicationProperties>;
 
         proxy: Proxy;
 
         constructor( proxy: Proxy ) {
             this.proxy = proxy;
+        }
+
+        public application_activate() {
+            return this.processApplicationPropertiesPromise( this.proxy.application_activate() );
         }
 
         public application_properties(): angular.IPromise<IApplicationProperties> {
@@ -259,7 +278,7 @@ module dvd_player {
                 ( applicationProperties: IApplicationProperties ) => {
 
                     if( this.pendingApplicationProperties == pendingApplicationProperties ) {
-                        this.applicationPropertues = applicationProperties;
+                        this.applicationProperties = applicationProperties;
                         this.pendingApplicationProperties = null;
                     } else {
                         // throw it on the ground
@@ -286,6 +305,19 @@ module dvd_player {
         }
 
 
+        static setup( module: angular.IModule ) {
+
+            module.factory('applicationService', [
+                "$http","$q",
+                ($http: angular.IHttpService, $q:angular.IQService) => {
+
+                    let adapter = json_broker.buildBrokerAdapter( $http, $q );
+                    let proxy = new dvd_player.Proxy(adapter);
+
+                    return new ApplicationService(proxy);
+
+                }]);
+        }
     }
 
     export class MediaService {
@@ -311,6 +343,16 @@ module dvd_player {
 
         media_playpause() {
             return this.processMediaPropertiesPromise( this.proxy.media_playpause() );
+        }
+
+
+        media_set_elapsed_time( elapsed_time: number ) {
+            return this.processMediaPropertiesPromise( this.proxy.media_set_elapsed_time( elapsed_time )  );
+
+        }
+
+        media_set_volume( audio_volume: number ): angular.IPromise<IMediaProperties> {
+            return this.processMediaPropertiesPromise( this.proxy.media_set_volume( audio_volume )  );
         }
 
         private processMediaPropertiesPromise( pendingMediaProperties: angular.IPromise<IMediaProperties> )
@@ -346,6 +388,21 @@ module dvd_player {
             }
             return true;
         }
+
+        static setup( module: angular.IModule ) {
+
+            module.factory('mediaService', [
+                "$http","$q",
+                ($http: angular.IHttpService, $q:angular.IQService) => {
+
+                    let adapter = json_broker.buildBrokerAdapter( $http, $q );
+                    let proxy = new dvd_player.Proxy(adapter);
+
+                    return new MediaService(proxy);
+
+                }]);
+        }
+
     }
 
     export class MediaStatePoller {
@@ -360,6 +417,14 @@ module dvd_player {
 
             this.$interval = $interval;
             this.mediaService= mediaService;
+        }
+
+        isPolling() {
+
+            if (null == this.pollingInterval) {
+                return false;
+            }
+            return true;
         }
 
         startPolling() {

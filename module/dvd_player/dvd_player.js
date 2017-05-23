@@ -8,12 +8,11 @@
 /// <reference path="../../ts/utility.ts" />
 var dvd_player;
 (function (dvd_player) {
-    var SERVICE_NAME = "remote_gateway.AppleScriptService:com.apple.DVDPlayer";
-    var VOLUME_MAX = 255;
+    var SERVICE_NAME = "remote_gateway.AppleScriptService:dvd_player";
+    dvd_player.VOLUME_MAX = 255;
     var VOLUME_MIN = 0;
     var BrokerMessage = json_broker.BrokerMessage;
     // x2/‌x4/‌x8/‌x16/‌x32
-    var ScanRate;
     (function (ScanRate) {
         ScanRate[ScanRate["unknown"] = 0] = "unknown";
         ScanRate[ScanRate["x2"] = 2] = "x2";
@@ -21,7 +20,8 @@ var dvd_player;
         ScanRate[ScanRate["x8"] = 8] = "x8";
         ScanRate[ScanRate["x16"] = 16] = "x16";
         ScanRate[ScanRate["x32"] = 32] = "x32";
-    })(ScanRate || (ScanRate = {}));
+    })(dvd_player.ScanRate || (dvd_player.ScanRate = {}));
+    var ScanRate = dvd_player.ScanRate;
     function lookupScanRate(dvd_scan_rate) {
         switch (dvd_scan_rate) {
             case "es2x":
@@ -38,7 +38,6 @@ var dvd_player;
                 return ScanRate.unknown;
         }
     }
-    var State;
     (function (State) {
         State[State["unknown"] = 0] = "unknown";
         State[State["playing"] = 1] = "playing";
@@ -47,7 +46,8 @@ var dvd_player;
         State[State["stopped"] = 4] = "stopped";
         State[State["scanning"] = 5] = "scanning";
         State[State["idle"] = 6] = "idle";
-    })(State || (State = {}));
+    })(dvd_player.State || (dvd_player.State = {}));
+    var State = dvd_player.State;
     function lookupState(dvd_state) {
         switch (dvd_state) {
             case "esid":
@@ -117,7 +117,7 @@ var dvd_player;
             return this.dispatchApplicationPropertiesRequest("application_set_viewer_full_screen");
         };
         Proxy.prototype.application_set_volume = function (audio_volume) {
-            return this.dispatchApplicationPropertiesRequest("set_audio_volume", audio_volume);
+            return this.dispatchApplicationPropertiesRequest("application_set_volume", audio_volume);
         };
         ///////////////////////////////////////////////////////////////////////
         // MEDIA
@@ -129,9 +129,12 @@ var dvd_player;
             }
             var request = BrokerMessage.buildRequestWithOrderedParameters(SERVICE_NAME, methodName, orderedParamaters);
             return this.adapter.dispatch(request).then(function (promiseValue) {
-                var answer = promiseValue.orderedParameters[0];
-                var dvd_state = lookupState(answer.dvd_state);
-                answer.dvd_state = dvd_state;
+                var mediaProperties = promiseValue.orderedParameters[0];
+                mediaProperties.dvd_state = lookupState(mediaProperties.dvd_state);
+                var answer = mediaProperties;
+                if (answer.has_media) {
+                    answer.remaing_time = answer.title_length - answer.elapsed_time;
+                }
                 return answer;
             });
         };
@@ -144,6 +147,12 @@ var dvd_player;
         Proxy.prototype.media_playpause = function () {
             return this.dispatchMediaPropertiesRequest("media_playpause");
         };
+        Proxy.prototype.media_set_elapsed_time = function (elapsed_time) {
+            return this.dispatchMediaPropertiesRequest("media_set_elapsed_time", elapsed_time);
+        };
+        Proxy.prototype.media_set_volume = function (audio_volume) {
+            return this.dispatchMediaPropertiesRequest("media_set_volume", audio_volume);
+        };
         return Proxy;
     }());
     dvd_player.Proxy = Proxy;
@@ -151,6 +160,9 @@ var dvd_player;
         function ApplicationService(proxy) {
             this.proxy = proxy;
         }
+        ApplicationService.prototype.application_activate = function () {
+            return this.processApplicationPropertiesPromise(this.proxy.application_activate());
+        };
         ApplicationService.prototype.application_properties = function () {
             return this.processApplicationPropertiesPromise(this.proxy.application_properties());
         };
@@ -165,7 +177,7 @@ var dvd_player;
             this.pendingApplicationProperties = pendingApplicationProperties;
             pendingApplicationProperties.then(function (applicationProperties) {
                 if (_this.pendingApplicationProperties == pendingApplicationProperties) {
-                    _this.applicationPropertues = applicationProperties;
+                    _this.applicationProperties = applicationProperties;
                     _this.pendingApplicationProperties = null;
                 }
                 else {
@@ -184,6 +196,15 @@ var dvd_player;
             }
             return true;
         };
+        ApplicationService.setup = function (module) {
+            module.factory('applicationService', [
+                "$http", "$q",
+                function ($http, $q) {
+                    var adapter = json_broker.buildBrokerAdapter($http, $q);
+                    var proxy = new dvd_player.Proxy(adapter);
+                    return new ApplicationService(proxy);
+                }]);
+        };
         return ApplicationService;
     }());
     dvd_player.ApplicationService = ApplicationService;
@@ -199,6 +220,12 @@ var dvd_player;
         };
         MediaService.prototype.media_playpause = function () {
             return this.processMediaPropertiesPromise(this.proxy.media_playpause());
+        };
+        MediaService.prototype.media_set_elapsed_time = function (elapsed_time) {
+            return this.processMediaPropertiesPromise(this.proxy.media_set_elapsed_time(elapsed_time));
+        };
+        MediaService.prototype.media_set_volume = function (audio_volume) {
+            return this.processMediaPropertiesPromise(this.proxy.media_set_volume(audio_volume));
         };
         MediaService.prototype.processMediaPropertiesPromise = function (pendingMediaProperties) {
             var _this = this;
@@ -224,6 +251,15 @@ var dvd_player;
             }
             return true;
         };
+        MediaService.setup = function (module) {
+            module.factory('mediaService', [
+                "$http", "$q",
+                function ($http, $q) {
+                    var adapter = json_broker.buildBrokerAdapter($http, $q);
+                    var proxy = new dvd_player.Proxy(adapter);
+                    return new MediaService(proxy);
+                }]);
+        };
         return MediaService;
     }());
     dvd_player.MediaService = MediaService;
@@ -233,6 +269,12 @@ var dvd_player;
             this.$interval = $interval;
             this.mediaService = mediaService;
         }
+        MediaStatePoller.prototype.isPolling = function () {
+            if (null == this.pollingInterval) {
+                return false;
+            }
+            return true;
+        };
         MediaStatePoller.prototype.startPolling = function () {
             var _this = this;
             if (null != this.pollingInterval) {
