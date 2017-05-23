@@ -24,4 +24,3 @@ mcRemote.config(function ($stateProvider) {
     };
     $stateProvider.state(state);
 });
-//# sourceMappingURL=index.js.map
