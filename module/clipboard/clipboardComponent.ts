@@ -3,6 +3,8 @@
 // Released under the MIT license ( http://opensource.org/licenses/MIT )
 //
 
+/// <reference path="../../github/lib.json_broker/json_broker.ts" />
+
 
 
 class ClipboardComponent {
