@@ -6,7 +6,7 @@ var component;
 (function (component) {
     var popup;
     (function (popup) {
-        var ViewController = (function () {
+        var ViewController = /** @class */ (function () {
             function ViewController($uibModalInstance, title, body) {
                 this.title = "Title";
                 this.body = "Body";

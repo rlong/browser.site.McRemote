@@ -3,7 +3,7 @@
  */
 var application;
 (function (application) {
-    var Context = (function () {
+    var Context = /** @class */ (function () {
         function Context() {
         }
         return Context;

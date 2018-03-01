@@ -3,7 +3,7 @@
 // Released under the MIT license ( http://opensource.org/licenses/MIT )
 //
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
-var ApplicationComponent = (function () {
+var ApplicationComponent = /** @class */ (function () {
     function ApplicationComponent(applicationService) {
         this.audioVolumeSliderConfig = {};
         console.log("ApplicationComponent.constructor");
@@ -38,7 +38,8 @@ var ApplicationComponent = (function () {
                 "$http", "$q", "applicationService",
                 function ($http, $q, applicationService) {
                     return new ApplicationComponent(applicationService);
-                }],
+                }
+            ],
             bindings: {}
         });
     };

@@ -9,7 +9,7 @@
 /// <reference path="../../ts/page.ts" />
 /// <reference path="../../ts/session.ts" />
 /// <reference path="../../component/popup.ts" />
-var ViewController = (function () {
+var ViewController = /** @class */ (function () {
     function ViewController($http, $interval, $q) {
         this.proxy = null;
         this.audioVolumeSliderConfig = {};

@@ -4,7 +4,7 @@
 //
 var ONE_PERCENT_VOLUME = dvd_player.VOLUME_MAX * 0.01;
 var TEN_PERCENT_VOLUME = dvd_player.VOLUME_MAX * 0.1;
-var MediaComponent = (function () {
+var MediaComponent = /** @class */ (function () {
     function MediaComponent(mediaService) {
         this.audioVolumeSliderConfig = {};
         this.elapsedTimeSliderConfig = null;
@@ -124,7 +124,8 @@ var MediaComponent = (function () {
                 "$http", "$q", "mediaService",
                 function ($http, $q, mediaService) {
                     return new MediaComponent(mediaService);
-                }],
+                }
+            ],
             bindings: {}
         });
     };

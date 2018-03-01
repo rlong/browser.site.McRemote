@@ -3,7 +3,7 @@
 // Released under the MIT license ( http://opensource.org/licenses/MIT )
 //
 /// <reference path="../../github/lib.json_broker/json_broker.ts" />
-var ClipboardComponent = (function () {
+var ClipboardComponent = /** @class */ (function () {
     function ClipboardComponent($http, $q) {
         this.clipboardAsText = "";
         var brokerAdapter = json_broker.buildBrokerAdapter($http, $q);

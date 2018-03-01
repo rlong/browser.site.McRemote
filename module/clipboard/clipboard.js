@@ -6,7 +6,7 @@
 var clipboard;
 (function (clipboard) {
     var SERVICE_NAME = "remote_gateway.AppleScriptService:clipboard";
-    var ClipBoardProxy = (function () {
+    var ClipBoardProxy = /** @class */ (function () {
         function ClipBoardProxy(messageBrokerAdapter) {
             this.adapter = messageBrokerAdapter;
         }

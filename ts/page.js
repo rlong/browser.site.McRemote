@@ -8,7 +8,7 @@ var page;
         return angular.module('McRemote', ['ngAnimate', 'ui.bootstrap', "ui.router"]);
     }
     page.buildAngularModule = buildAngularModule;
-    var Context = (function () {
+    var Context = /** @class */ (function () {
         function Context() {
         }
         return Context;

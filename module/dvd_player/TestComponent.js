@@ -2,7 +2,7 @@
 //
 // Released under the MIT license ( http://opensource.org/licenses/MIT )
 //
-var TestComponent = (function () {
+var TestComponent = /** @class */ (function () {
     function TestComponent($interval, mediaService) {
         this.mediaService = mediaService;
         this.mediaStatePoller = new dvd_player.MediaStatePoller($interval, mediaService);

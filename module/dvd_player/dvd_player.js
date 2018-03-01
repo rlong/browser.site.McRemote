@@ -13,6 +13,7 @@ var dvd_player;
     var VOLUME_MIN = 0;
     var BrokerMessage = json_broker.BrokerMessage;
     // x2/‌x4/‌x8/‌x16/‌x32
+    var ScanRate;
     (function (ScanRate) {
         ScanRate[ScanRate["unknown"] = 0] = "unknown";
         ScanRate[ScanRate["x2"] = 2] = "x2";
@@ -20,8 +21,7 @@ var dvd_player;
         ScanRate[ScanRate["x8"] = 8] = "x8";
         ScanRate[ScanRate["x16"] = 16] = "x16";
         ScanRate[ScanRate["x32"] = 32] = "x32";
-    })(dvd_player.ScanRate || (dvd_player.ScanRate = {}));
-    var ScanRate = dvd_player.ScanRate;
+    })(ScanRate = dvd_player.ScanRate || (dvd_player.ScanRate = {}));
     function lookupScanRate(dvd_scan_rate) {
         switch (dvd_scan_rate) {
             case "es2x":
@@ -38,6 +38,7 @@ var dvd_player;
                 return ScanRate.unknown;
         }
     }
+    var State;
     (function (State) {
         State[State["unknown"] = 0] = "unknown";
         State[State["playing"] = 1] = "playing";
@@ -46,8 +47,7 @@ var dvd_player;
         State[State["stopped"] = 4] = "stopped";
         State[State["scanning"] = 5] = "scanning";
         State[State["idle"] = 6] = "idle";
-    })(dvd_player.State || (dvd_player.State = {}));
-    var State = dvd_player.State;
+    })(State = dvd_player.State || (dvd_player.State = {}));
     function lookupState(dvd_state) {
         switch (dvd_state) {
             case "esid":
@@ -66,7 +66,7 @@ var dvd_player;
                 return State.unknown;
         }
     }
-    var Proxy = (function () {
+    var Proxy = /** @class */ (function () {
         function Proxy(adapter) {
             this.adapter = adapter;
         }
@@ -156,7 +156,7 @@ var dvd_player;
         return Proxy;
     }());
     dvd_player.Proxy = Proxy;
-    var ApplicationService = (function () {
+    var ApplicationService = /** @class */ (function () {
         function ApplicationService(proxy) {
             this.proxy = proxy;
         }
@@ -181,6 +181,7 @@ var dvd_player;
                     _this.pendingApplicationProperties = null;
                 }
                 else {
+                    // throw it on the ground
                 }
             }, function (reason) {
                 console.warn(reason);
@@ -203,12 +204,13 @@ var dvd_player;
                     var adapter = json_broker.buildBrokerAdapter($http, $q);
                     var proxy = new dvd_player.Proxy(adapter);
                     return new ApplicationService(proxy);
-                }]);
+                }
+            ]);
         };
         return ApplicationService;
     }());
     dvd_player.ApplicationService = ApplicationService;
-    var MediaService = (function () {
+    var MediaService = /** @class */ (function () {
         function MediaService(proxy) {
             this.proxy = proxy;
         }
@@ -236,6 +238,7 @@ var dvd_player;
                     _this.pendingMediaProperties = null;
                 }
                 else {
+                    // throw it on the ground
                 }
             }, function (reason) {
                 console.warn(reason);
@@ -258,12 +261,13 @@ var dvd_player;
                     var adapter = json_broker.buildBrokerAdapter($http, $q);
                     var proxy = new dvd_player.Proxy(adapter);
                     return new MediaService(proxy);
-                }]);
+                }
+            ]);
         };
         return MediaService;
     }());
     dvd_player.MediaService = MediaService;
-    var MediaStatePoller = (function () {
+    var MediaStatePoller = /** @class */ (function () {
         function MediaStatePoller($interval, mediaService) {
             this.pollingInterval = null;
             this.$interval = $interval;
